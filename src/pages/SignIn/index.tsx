@@ -1,6 +1,5 @@
 import React, { useCallback, useRef } from 'react';
 import {
-  Image,
   View,
   ScrollView,
   KeyboardAvoidingView,
@@ -26,6 +25,7 @@ import logoImg from '../../assets/logo.png';
 
 import {
   Container,
+  ImageLogo,
   Title,
   ForgotPassword,
   ForgotPasswordText,
@@ -94,9 +94,9 @@ const SignIn: React.FC = () => {
           contentContainerStyle={{ flex: 1 }}
         >
           <Container>
-            <Image source={logoImg} />
+            <ImageLogo source={logoImg} />
             <View>
-              <Title>Faça seu logon</Title>
+              <Title>Faça seu login</Title>
             </View>
 
             <Form ref={formRef} onSubmit={handleSignIn}>
@@ -106,7 +106,7 @@ const SignIn: React.FC = () => {
                 keyboardType="email-address"
                 name="email"
                 icon="mail"
-                placeholder="Nome"
+                placeholder="E-mail"
                 returnKeyType="next"
                 onSubmitEditing={() => {
                   passwordInputRef.current?.focus();
@@ -140,7 +140,7 @@ const SignIn: React.FC = () => {
       </KeyboardAvoidingView>
 
       <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
-        <Icon name="log-in" size={20} color="#ff9000" />
+        <Icon name="log-in" size={20} color="#dec81b" />
         <CreateAccountButtonText>Crie uma conta</CreateAccountButtonText>
       </CreateAccountButton>
     </>

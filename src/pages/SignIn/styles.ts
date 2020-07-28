@@ -9,10 +9,15 @@ export const Container = styled.View`
   padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
 `;
 
+export const ImageLogo = styled.Image`
+  width: 300px;
+  height: 150px;
+`;
+
 export const Title = styled.Text`
   font-size: 24px;
+  font-weight: 700;
   color: #f4ede8;
-  font-family: 'RobotoSlab-Medium';
   margin: 64px 0 24px;
 `;
 
@@ -23,7 +28,6 @@ export const ForgotPassword = styled.TouchableOpacity`
 export const ForgotPasswordText = styled.Text`
   color: #f4ede8;
   font-size: 16px;
-  font-family: 'RobotoSlab-Regular';
 `;
 
 export const CreateAccountButton = styled.TouchableOpacity`
@@ -42,8 +46,7 @@ export const CreateAccountButton = styled.TouchableOpacity`
 `;
 
 export const CreateAccountButtonText = styled.Text`
-  color: #ff9000;
+  color: #dec81b;
   font-size: 18px;
-  font-family: 'RobotoSlab-Regular';
   margin-left: 16px;
 `;

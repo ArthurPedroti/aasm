@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
         }
         renderItem={({ item: provider }) => (
           <ProviderContainer onPress={() => {}}>
-            <Icon name="settings" size={72} color="#f7df1e" />
+            <Icon name="settings" size={72} color="#dec81b" />
 
             <ProviderInfo>
               <ProviderName>{provider.name}</ProviderName>
@@ -72,7 +72,7 @@ const Dashboard: React.FC = () => {
               ) : null}
               {provider.type === 'without-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="alert-triangle" size={14} color="#f7df1e" />
+                  <Icon name="alert-triangle" size={14} color="#dec81b" />
                   <ProviderMetaText>Sem solução paliativa</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
