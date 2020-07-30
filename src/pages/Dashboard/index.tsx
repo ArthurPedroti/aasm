@@ -15,25 +15,30 @@ import {
   ProviderMeta,
   ProviderMetaText,
   ProvidersListTitle,
+  CallType,
 } from './styles';
 
 export interface Provider {
   name: string;
   type: string;
+  status: string;
 }
 
 const providers = [
   {
     name: 'Arthur',
     type: 'with-palliative-solution',
+    status: 'in-attendance',
   },
   {
     name: 'João',
     type: 'without-palliative-solution',
+    status: 'not-attended',
   },
   {
     name: 'Lucas',
     type: 'critical-without-palliative-solution',
+    status: 'attended',
   },
 ];
 
@@ -56,31 +61,59 @@ const Dashboard: React.FC = () => {
         }
         renderItem={({ item: provider }) => (
           <ProviderContainer onPress={() => {}}>
-            <Icon name="settings" size={72} color="#dec81b" />
+            {provider.type === 'with-palliative-solution' ? (
+              <CallType>
+                <Icon name="alert-circle" size={72} color="#e6fffa" />
+              </CallType>
+            ) : null}
+            {provider.type === 'without-palliative-solution' ? (
+              <Icon name="alert-triangle" size={72} color="#dec81b" />
+            ) : null}
+            {provider.type === 'critical-without-palliative-solution' ? (
+              <Icon name="alert-octagon" size={72} color="#c53030" />
+            ) : null}
 
             <ProviderInfo>
               <ProviderName>{provider.name}</ProviderName>
-              <ProviderMeta>
-                <Icon name="calendar" size={14} color="#999591" />
-                <ProviderMetaText>Assistencia técnica</ProviderMetaText>
-              </ProviderMeta>
+              {provider.status === 'attended' ? (
+                <ProviderMeta>
+                  <Icon name="check" size={14} color="#78da55" />
+                  <ProviderMetaText type="success">Atendido</ProviderMetaText>
+                </ProviderMeta>
+              ) : null}
+              {provider.status === 'in-attendance' ? (
+                <ProviderMeta>
+                  <Icon name="chevrons-right" size={14} color="#dec81b" />
+                  <ProviderMetaText type="alert">Em andamento</ProviderMetaText>
+                </ProviderMeta>
+              ) : null}
+              {provider.status === 'not-attended' ? (
+                <ProviderMeta>
+                  <Icon name="clock" size={14} color="#c53030" />
+                  <ProviderMetaText type="error">Não atendido</ProviderMetaText>
+                </ProviderMeta>
+              ) : null}
               {provider.type === 'with-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="alert-circle" size={14} color="#e6fffa" />
-                  <ProviderMetaText>Com solução paliativa</ProviderMetaText>
+                  <Icon name="activity" size={14} color="#f4ede8" />
+                  <ProviderMetaText type="default">
+                    Máquina não parada
+                  </ProviderMetaText>
                 </ProviderMeta>
               ) : null}
               {provider.type === 'without-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="alert-triangle" size={14} color="#dec81b" />
-                  <ProviderMetaText>Sem solução paliativa</ProviderMetaText>
+                  <Icon name="tool" size={14} color="#f4ede8" />
+                  <ProviderMetaText type="default">
+                    Máquina parada
+                  </ProviderMetaText>
                 </ProviderMeta>
               ) : null}
               {provider.type === 'critical-without-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="alert-octagon" size={14} color="#c53030" />
-                  <ProviderMetaText>
-                    Crítico e sem solução paliativa
+                  <Icon name="activity" size={14} color="#f4ede8" />
+                  <ProviderMetaText type="default">
+                    Pendência jurídica
                   </ProviderMetaText>
                 </ProviderMeta>
               ) : null}

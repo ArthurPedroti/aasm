@@ -1,8 +1,30 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { Platform, FlatList } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { Provider } from './index';
+
+interface ContainerProps {
+  type?: 'success' | 'info' | 'alert' | 'error' | 'default';
+}
+
+const containerVariations = {
+  success: css`
+    color: #78da55;
+  `,
+  info: css`
+    color: #e6fffa;
+  `,
+  default: css`
+    color: #f4ede8;
+  `,
+  alert: css`
+    color: #dec81b;
+  `,
+  error: css`
+    color: #c53030;
+  `,
+};
 
 export const Container = styled.View`
   flex: 1;
@@ -31,6 +53,13 @@ export const UserName = styled.Text`
 
 export const ProvidersList = styled(FlatList as new () => FlatList<Provider>)`
   padding: 32px 24px 16px;
+`;
+
+export const CallType = styled.View``;
+
+export const IconText = styled.Text`
+  color: #f4ede8;
+  text-align: center;
 `;
 
 export const ProvidersListTitle = styled.Text`
@@ -66,7 +95,7 @@ export const ProviderMeta = styled.View`
   margin-top: 8px;
 `;
 
-export const ProviderMetaText = styled.Text`
+export const ProviderMetaText = styled.Text<ContainerProps>`
   margin-left: 8px;
-  color: #999591;
+  ${props => containerVariations[props.type || 'default']}
 `;
