@@ -1,6 +1,8 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../hooks/auth';
 
 import {
@@ -8,6 +10,8 @@ import {
   Header,
   HeaderTitle,
   UserName,
+  CreateCallButton,
+  CreateCallButtonText,
   ProvidersList,
   ProviderContainer,
   ProviderInfo,
@@ -44,6 +48,8 @@ const providers = [
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigation = useNavigation();
+
   return (
     <Container>
       <Header>
@@ -51,6 +57,10 @@ const Dashboard: React.FC = () => {
           Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
+        <CreateCallButton onPress={() => navigation.navigate('CreateCall')}>
+          <CreateCallButtonText>Novo chamado</CreateCallButtonText>
+          <Icon name="plus-circle" size={24} color="#999591" />
+        </CreateCallButton>
       </Header>
 
       <ProvidersList
@@ -60,7 +70,7 @@ const Dashboard: React.FC = () => {
           <ProvidersListTitle>Seus chamados</ProvidersListTitle>
         }
         renderItem={({ item: provider }) => (
-          <ProviderContainer onPress={() => {}}>
+          <ProviderContainer onPress={() => navigation.navigate('CreateCall')}>
             {provider.type === 'with-palliative-solution' ? (
               <CallType>
                 <Icon name="alert-circle" size={72} color="#e6fffa" />
@@ -95,7 +105,7 @@ const Dashboard: React.FC = () => {
               ) : null}
               {provider.type === 'with-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="activity" size={14} color="#f4ede8" />
+                  <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
                     Máquina não parada
                   </ProviderMetaText>
@@ -103,7 +113,7 @@ const Dashboard: React.FC = () => {
               ) : null}
               {provider.type === 'without-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="tool" size={14} color="#f4ede8" />
+                  <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
                     Máquina parada
                   </ProviderMetaText>
@@ -111,7 +121,7 @@ const Dashboard: React.FC = () => {
               ) : null}
               {provider.type === 'critical-without-palliative-solution' ? (
                 <ProviderMeta>
-                  <Icon name="activity" size={14} color="#f4ede8" />
+                  <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
                     Pendência jurídica
                   </ProviderMetaText>

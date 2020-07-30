@@ -16,7 +16,7 @@ const containerVariations = {
     color: #e6fffa;
   `,
   default: css`
-    color: #f4ede8;
+    color: #999591;
   `,
   alert: css`
     color: #dec81b;
@@ -47,8 +47,19 @@ export const HeaderTitle = styled.Text`
 
 export const UserName = styled.Text`
   color: #dec81b;
-  /* font-family: 'RobotoSlab-Medium'; */
   font-weight: 700;
+`;
+
+export const CreateCallButton = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const CreateCallButtonText = styled.Text`
+  color: #999591;
+  font-size: 16px;
+  margin-right: 16px;
 `;
 
 export const ProvidersList = styled(FlatList as new () => FlatList<Provider>)`
