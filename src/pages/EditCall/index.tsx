@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -21,21 +21,35 @@ import Button from '../../components/Button';
 
 import { Container, Header, HeaderTitle, BackButton } from './styles';
 
-interface CreateCallFormData {
+interface RouteParams {
+  call: {
+    name: string;
+    class: string;
+    equipment: string;
+    description: string;
+    type: string;
+    status: string;
+  };
+}
+
+interface EditCallFormData {
   name: string;
   email: string;
   password: string;
 }
 
-const CreateCall: React.FC = () => {
+const EditCall: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const route = useRoute();
   const navigation = useNavigation();
+
+  const { call } = route.params as RouteParams;
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const handleCreateCall = useCallback(
-    async (data: CreateCallFormData) => {
+  const handleEditCall = useCallback(
+    async (data: EditCallFormData) => {
       try {
         formRef.current?.setErrors({});
 
@@ -82,16 +96,19 @@ const CreateCall: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Novo Chamado</HeaderTitle>
+        <HeaderTitle>Editar Chamado</HeaderTitle>
       </Header>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled
       >
-        <ScrollView keyboardShouldPersistTaps="handled">
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
           <Container>
-            <Form ref={formRef} onSubmit={handleCreateCall}>
+            <Form initialData={call} ref={formRef} onSubmit={handleEditCall}>
               <Input
                 autoCapitalize="words"
                 name="name"
@@ -107,7 +124,7 @@ const CreateCall: React.FC = () => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                name="email"
+                name="class"
                 icon="tag"
                 placeholder="Classificação"
                 returnKeyType="next"
@@ -120,7 +137,7 @@ const CreateCall: React.FC = () => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                name="email"
+                name="equipment"
                 icon="settings"
                 placeholder="Equipamento"
                 returnKeyType="next"
@@ -130,7 +147,7 @@ const CreateCall: React.FC = () => {
               />
               <Input
                 ref={passwordInputRef}
-                name="password"
+                name="description"
                 icon="message-square"
                 placeholder="Descrição"
                 textContentType="newPassword"
@@ -147,7 +164,7 @@ const CreateCall: React.FC = () => {
                   formRef.current?.submitForm();
                 }}
               >
-                Cadastrar
+                Salvar
               </Button>
             </Form>
           </Container>
@@ -156,4 +173,4 @@ const CreateCall: React.FC = () => {
     </>
   );
 };
-export default CreateCall;
+export default EditCall;

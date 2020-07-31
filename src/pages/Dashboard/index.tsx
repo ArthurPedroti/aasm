@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 
@@ -22,25 +22,37 @@ import {
   CallType,
 } from './styles';
 
-export interface Provider {
+export interface Call {
   name: string;
+  class: string;
+  equipment: string;
+  description: string;
   type: string;
   status: string;
 }
 
-const providers = [
+const calls = [
   {
     name: 'Arthur',
+    class: 'Garantia',
+    equipment: 'Escavadeira',
+    description: 'Máquina está superaquecendo',
     type: 'with-palliative-solution',
     status: 'in-attendance',
   },
   {
     name: 'João',
+    class: 'Manutenção Preventiva',
+    equipment: 'Escavadeira',
+    description: 'Máquina está superaquecendo',
     type: 'without-palliative-solution',
     status: 'not-attended',
   },
   {
     name: 'Lucas',
+    class: 'Manutenção Corretiva',
+    equipment: 'Escavadeira',
+    description: 'Máquina está superaquecendo',
     type: 'critical-without-palliative-solution',
     status: 'attended',
   },
@@ -48,7 +60,18 @@ const providers = [
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const navigation = useNavigation();
+  const { navigate } = useNavigation();
+
+  const navigationToEditCall = useCallback(
+    (call: Call) => {
+      navigate('EditCall', { call });
+    },
+    [navigate],
+  );
+
+  const navigationToCreateCall = useCallback(() => {
+    navigate('CreateCall');
+  }, [navigate]);
 
   return (
     <Container>
@@ -57,53 +80,53 @@ const Dashboard: React.FC = () => {
           Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
-        <CreateCallButton onPress={() => navigation.navigate('CreateCall')}>
+        <CreateCallButton onPress={navigationToCreateCall}>
           <CreateCallButtonText>Novo chamado</CreateCallButtonText>
           <Icon name="plus-circle" size={24} color="#999591" />
         </CreateCallButton>
       </Header>
 
       <ProvidersList
-        data={providers}
-        keyExtractor={provider => provider.name}
+        data={calls}
+        keyExtractor={call => call.name}
         ListHeaderComponent={
           <ProvidersListTitle>Seus chamados</ProvidersListTitle>
         }
-        renderItem={({ item: provider }) => (
-          <ProviderContainer onPress={() => navigation.navigate('CreateCall')}>
-            {provider.type === 'with-palliative-solution' ? (
+        renderItem={({ item: call }) => (
+          <ProviderContainer onPress={() => navigationToEditCall(call)}>
+            {call.type === 'with-palliative-solution' ? (
               <CallType>
                 <Icon name="alert-circle" size={72} color="#e6fffa" />
               </CallType>
             ) : null}
-            {provider.type === 'without-palliative-solution' ? (
+            {call.type === 'without-palliative-solution' ? (
               <Icon name="alert-triangle" size={72} color="#dec81b" />
             ) : null}
-            {provider.type === 'critical-without-palliative-solution' ? (
+            {call.type === 'critical-without-palliative-solution' ? (
               <Icon name="alert-octagon" size={72} color="#c53030" />
             ) : null}
 
             <ProviderInfo>
-              <ProviderName>{provider.name}</ProviderName>
-              {provider.status === 'attended' ? (
+              <ProviderName>{call.name}</ProviderName>
+              {call.status === 'attended' ? (
                 <ProviderMeta>
                   <Icon name="check" size={14} color="#78da55" />
                   <ProviderMetaText type="success">Atendido</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {provider.status === 'in-attendance' ? (
+              {call.status === 'in-attendance' ? (
                 <ProviderMeta>
                   <Icon name="chevrons-right" size={14} color="#dec81b" />
                   <ProviderMetaText type="alert">Em andamento</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {provider.status === 'not-attended' ? (
+              {call.status === 'not-attended' ? (
                 <ProviderMeta>
                   <Icon name="clock" size={14} color="#c53030" />
                   <ProviderMetaText type="error">Não atendido</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {provider.type === 'with-palliative-solution' ? (
+              {call.type === 'with-palliative-solution' ? (
                 <ProviderMeta>
                   <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
@@ -111,7 +134,7 @@ const Dashboard: React.FC = () => {
                   </ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {provider.type === 'without-palliative-solution' ? (
+              {call.type === 'without-palliative-solution' ? (
                 <ProviderMeta>
                   <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
@@ -119,7 +142,7 @@ const Dashboard: React.FC = () => {
                   </ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {provider.type === 'critical-without-palliative-solution' ? (
+              {call.type === 'critical-without-palliative-solution' ? (
                 <ProviderMeta>
                   <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
