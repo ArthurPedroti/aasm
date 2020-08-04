@@ -103,15 +103,12 @@ const EditCall: React.FC = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled
       >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flex: 1 }}
-        >
+        <ScrollView keyboardShouldPersistTaps="handled">
           <Container>
             <Form initialData={call} ref={formRef} onSubmit={handleEditCall}>
               <Input
                 autoCapitalize="words"
-                name="name"
+                name="client"
                 icon="user"
                 placeholder="Cliente"
                 returnKeyType="next"
@@ -140,6 +137,19 @@ const EditCall: React.FC = () => {
                 name="equipment"
                 icon="settings"
                 placeholder="Equipamento"
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  passwordInputRef.current?.focus();
+                }}
+              />
+              <Input
+                ref={emailInputRef}
+                autoCorrect={false}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                name="type"
+                icon="tag"
+                placeholder="Tipo"
                 returnKeyType="next"
                 onSubmitEditing={() => {
                   passwordInputRef.current?.focus();

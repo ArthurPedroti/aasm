@@ -33,28 +33,28 @@ export interface Call {
 
 const calls = [
   {
-    name: 'Arthur',
+    client: 'Arthur',
     class: 'Garantia',
     equipment: 'Escavadeira',
+    type: 'Máquina não parada',
+    status: 'Em andamento',
     description: 'Máquina está superaquecendo',
-    type: 'with-palliative-solution',
-    status: 'in-attendance',
   },
   {
-    name: 'João',
+    client: 'João',
     class: 'Manutenção Preventiva',
     equipment: 'Escavadeira',
+    type: 'Máquina parada',
+    status: 'Não atendido',
     description: 'Máquina está superaquecendo',
-    type: 'without-palliative-solution',
-    status: 'not-attended',
   },
   {
-    name: 'Lucas',
+    client: 'Lucas',
     class: 'Manutenção Corretiva',
     equipment: 'Escavadeira',
+    type: 'Pendência jurídica',
+    status: 'Atendido',
     description: 'Máquina está superaquecendo',
-    type: 'critical-without-palliative-solution',
-    status: 'attended',
   },
 ];
 
@@ -88,45 +88,45 @@ const Dashboard: React.FC = () => {
 
       <ProvidersList
         data={calls}
-        keyExtractor={call => call.name}
+        keyExtractor={call => call.client}
         ListHeaderComponent={
           <ProvidersListTitle>Seus chamados</ProvidersListTitle>
         }
         renderItem={({ item: call }) => (
           <ProviderContainer onPress={() => navigationToEditCall(call)}>
-            {call.type === 'with-palliative-solution' ? (
+            {call.type === 'Máquina não parada' ? (
               <CallType>
                 <Icon name="alert-circle" size={72} color="#e6fffa" />
               </CallType>
             ) : null}
-            {call.type === 'without-palliative-solution' ? (
+            {call.type === 'Máquina parada' ? (
               <Icon name="alert-triangle" size={72} color="#dec81b" />
             ) : null}
-            {call.type === 'critical-without-palliative-solution' ? (
+            {call.type === 'Pendência jurídica' ? (
               <Icon name="alert-octagon" size={72} color="#c53030" />
             ) : null}
 
             <ProviderInfo>
-              <ProviderName>{call.name}</ProviderName>
-              {call.status === 'attended' ? (
+              <ProviderName>{call.client}</ProviderName>
+              {call.status === 'Atendido' ? (
                 <ProviderMeta>
                   <Icon name="check" size={14} color="#78da55" />
                   <ProviderMetaText type="success">Atendido</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {call.status === 'in-attendance' ? (
+              {call.status === 'Em andamento' ? (
                 <ProviderMeta>
                   <Icon name="chevrons-right" size={14} color="#dec81b" />
                   <ProviderMetaText type="alert">Em andamento</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {call.status === 'not-attended' ? (
+              {call.status === 'Não atendido' ? (
                 <ProviderMeta>
                   <Icon name="clock" size={14} color="#c53030" />
                   <ProviderMetaText type="error">Não atendido</ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {call.type === 'with-palliative-solution' ? (
+              {call.type === 'Máquina não parada' ? (
                 <ProviderMeta>
                   <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
                   </ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {call.type === 'without-palliative-solution' ? (
+              {call.type === 'Máquina parada' ? (
                 <ProviderMeta>
                   <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">
@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
                   </ProviderMetaText>
                 </ProviderMeta>
               ) : null}
-              {call.type === 'critical-without-palliative-solution' ? (
+              {call.type === 'Pendência jurídica' ? (
                 <ProviderMeta>
                   <Entypo name="tools" size={14} color="#999591" />
                   <ProviderMetaText type="default">

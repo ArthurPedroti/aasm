@@ -129,6 +129,19 @@ const CreateCall: React.FC = () => {
                 }}
               />
               <Input
+                ref={emailInputRef}
+                autoCorrect={false}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                name="type"
+                icon="tag"
+                placeholder="Tipo"
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  passwordInputRef.current?.focus();
+                }}
+              />
+              <Input
                 ref={passwordInputRef}
                 name="password"
                 icon="message-square"

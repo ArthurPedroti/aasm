@@ -16,6 +16,7 @@ export const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 30px;
 `;
 
 export const BackButton = styled.TouchableOpacity``;
@@ -25,13 +26,6 @@ export const HeaderTitle = styled.Text`
   font-size: 20px;
   margin-right: auto;
   margin-left: 16px;
-`;
-
-export const Title = styled.Text`
-  font-size: 24px;
-  color: #f4ede8;
-  font-family: 'RobotoSlab-Medium';
-  margin: 64px 0 24px;
 `;
 
 export const BackToSignIn = styled.TouchableOpacity`
