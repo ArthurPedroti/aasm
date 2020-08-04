@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { Platform, FlatList } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
-import { Provider } from './index';
+import { Call } from './index';
 
 interface ContainerProps {
   type?: 'success' | 'info' | 'alert' | 'error' | 'default';
@@ -62,11 +62,17 @@ export const CreateCallButtonText = styled.Text`
   margin-right: 16px;
 `;
 
-export const ProvidersList = styled(FlatList as new () => FlatList<Provider>)`
+export const ProvidersList = styled(FlatList as new () => FlatList<Call>)`
   padding: 32px 24px 16px;
 `;
 
-export const CallType = styled.View``;
+export const CallType = styled.View`
+  align-items: center;
+`;
+export const CallTypeText = styled.Text`
+  margin-top: 4px;
+  color: #f4ede8;
+`;
 
 export const IconText = styled.Text`
   color: #f4ede8;

@@ -1,8 +1,11 @@
 import React, { useCallback } from 'react';
+
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { differenceInDays } from 'date-fns';
 
 import { useNavigation } from '@react-navigation/native';
+import { View } from 'react-native';
 import { useAuth } from '../../hooks/auth';
 
 import {
@@ -20,18 +23,29 @@ import {
   ProviderMetaText,
   ProvidersListTitle,
   CallType,
+  CallTypeText,
 } from './styles';
 
 export interface Call {
-  name: string;
+  client: string;
   class: string;
   equipment: string;
-  description: string;
   type: string;
   status: string;
+  description: string;
+  created_at: Date;
 }
 
 const calls = [
+  {
+    client: 'Guilherme',
+    class: 'Garantia',
+    equipment: 'Escavadeira',
+    type: 'Máquina não parada',
+    status: 'Em andamento',
+    description: 'Máquina está superaquecendo',
+    created_at: new Date(2020, 6, 30),
+  },
   {
     client: 'Arthur',
     class: 'Garantia',
@@ -39,6 +53,7 @@ const calls = [
     type: 'Máquina não parada',
     status: 'Em andamento',
     description: 'Máquina está superaquecendo',
+    created_at: new Date(2020, 6, 25),
   },
   {
     client: 'João',
@@ -47,6 +62,7 @@ const calls = [
     type: 'Máquina parada',
     status: 'Não atendido',
     description: 'Máquina está superaquecendo',
+    created_at: new Date(2020, 7, 2),
   },
   {
     client: 'Lucas',
@@ -55,6 +71,7 @@ const calls = [
     type: 'Pendência jurídica',
     status: 'Atendido',
     description: 'Máquina está superaquecendo',
+    created_at: new Date(2020, 7, 3),
   },
 ];
 
@@ -85,25 +102,47 @@ const Dashboard: React.FC = () => {
           <Icon name="plus-circle" size={24} color="#999591" />
         </CreateCallButton>
       </Header>
-
       <ProvidersList
         data={calls}
         keyExtractor={call => call.client}
+        ListFooterComponent={<View style={{ margin: 32 }} />}
         ListHeaderComponent={
           <ProvidersListTitle>Seus chamados</ProvidersListTitle>
         }
         renderItem={({ item: call }) => (
           <ProviderContainer onPress={() => navigationToEditCall(call)}>
-            {call.type === 'Máquina não parada' ? (
+            {call.type === 'Máquina não parada' &&
+            -differenceInDays(call.created_at, Date.now()) < 10 ? (
               <CallType>
                 <Icon name="alert-circle" size={72} color="#e6fffa" />
+                <CallTypeText>
+                  {-differenceInDays(call.created_at, Date.now())} dias
+                </CallTypeText>
               </CallType>
             ) : null}
-            {call.type === 'Máquina parada' ? (
-              <Icon name="alert-triangle" size={72} color="#dec81b" />
+            {(call.type === 'Máquina parada' &&
+              -differenceInDays(call.created_at, Date.now()) < 2) ||
+            (call.type === 'Máquina não parada' &&
+              -differenceInDays(call.created_at, Date.now()) < 20 &&
+              -differenceInDays(call.created_at, Date.now()) > 9) ? (
+              <CallType>
+                <Icon name="alert-triangle" size={72} color="#dec81b" />
+                <CallTypeText>
+                  {-differenceInDays(call.created_at, Date.now())} dias
+                </CallTypeText>
+              </CallType>
             ) : null}
-            {call.type === 'Pendência jurídica' ? (
-              <Icon name="alert-octagon" size={72} color="#c53030" />
+            {call.type === 'Pendência jurídica' ||
+            (call.type === 'Máquina não parada' &&
+              -differenceInDays(call.created_at, Date.now()) > 19) ||
+            (call.type === 'Máquina parada' &&
+              -differenceInDays(call.created_at, Date.now()) > 1) ? (
+              <CallType>
+                <Icon name="alert-octagon" size={72} color="#c53030" />
+                <CallTypeText>
+                  {-differenceInDays(call.created_at, Date.now())} dias
+                </CallTypeText>
+              </CallType>
             ) : null}
 
             <ProviderInfo>

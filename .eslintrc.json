@@ -36,6 +36,8 @@
     "react-hooks/exhaustive-deps": "warn",
     "no-unused-expressions": "off",
     "@typescript-eslint/camelcase": "off",
+    "import/no-duplicates": "off",
+    "react/jsx-indent": "off",
     "react/jsx-filename-extension": [
       1,
       {
