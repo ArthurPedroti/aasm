@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -21,35 +21,21 @@ import Button from '../../components/Button';
 
 import { Container, Header, HeaderTitle, BackButton } from './styles';
 
-interface RouteParams {
-  call: {
-    name: string;
-    class: string;
-    equipment: string;
-    description: string;
-    type: string;
-    status: string;
-  };
-}
-
-interface EditCallFormData {
+interface CreateTicketFormData {
   name: string;
   email: string;
   password: string;
 }
 
-const EditCall: React.FC = () => {
+const CreateTicket: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-  const route = useRoute();
   const navigation = useNavigation();
-
-  const { call } = route.params as RouteParams;
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const handleEditCall = useCallback(
-    async (data: EditCallFormData) => {
+  const handleCreateTicket = useCallback(
+    async (data: CreateTicketFormData) => {
       try {
         formRef.current?.setErrors({});
 
@@ -96,7 +82,7 @@ const EditCall: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Editar Chamado</HeaderTitle>
+        <HeaderTitle>Novo Chamado</HeaderTitle>
       </Header>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -105,10 +91,10 @@ const EditCall: React.FC = () => {
       >
         <ScrollView keyboardShouldPersistTaps="handled">
           <Container>
-            <Form initialData={call} ref={formRef} onSubmit={handleEditCall}>
+            <Form ref={formRef} onSubmit={handleCreateTicket}>
               <Input
                 autoCapitalize="words"
-                name="client"
+                name="name"
                 icon="user"
                 placeholder="Cliente"
                 returnKeyType="next"
@@ -121,7 +107,7 @@ const EditCall: React.FC = () => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                name="class"
+                name="email"
                 icon="tag"
                 placeholder="Classificação"
                 returnKeyType="next"
@@ -134,7 +120,7 @@ const EditCall: React.FC = () => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                name="equipment"
+                name="email"
                 icon="settings"
                 placeholder="Equipamento"
                 returnKeyType="next"
@@ -157,7 +143,7 @@ const EditCall: React.FC = () => {
               />
               <Input
                 ref={passwordInputRef}
-                name="description"
+                name="password"
                 icon="message-square"
                 placeholder="Descrição"
                 textContentType="newPassword"
@@ -174,7 +160,7 @@ const EditCall: React.FC = () => {
                   formRef.current?.submitForm();
                 }}
               >
-                Salvar
+                Cadastrar
               </Button>
             </Form>
           </Container>
@@ -183,4 +169,4 @@ const EditCall: React.FC = () => {
     </>
   );
 };
-export default EditCall;
+export default CreateTicket;

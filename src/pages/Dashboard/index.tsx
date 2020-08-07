@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, parseISO } from 'date-fns';
 
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
+import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 
 import {
@@ -13,27 +14,28 @@ import {
   Header,
   HeaderTitle,
   UserName,
-  CreateCallButton,
-  CreateCallButtonText,
-  ProvidersList,
-  ProviderContainer,
-  ProviderInfo,
-  ProviderName,
-  ProviderMeta,
-  ProviderMetaText,
-  ProvidersListTitle,
-  CallType,
-  CallTypeText,
+  CreateTicketButton,
+  CreateTicketButtonText,
+  TicketsList,
+  TicketContainer,
+  TicketInfo,
+  TicketName,
+  TicketMeta,
+  TicketMetaText,
+  TicketsListTitle,
+  TicketType,
+  TicketTypeText,
 } from './styles';
 
-export interface Call {
+export interface Ticket {
+  id: string;
   client: string;
   class: string;
   equipment: string;
   type: string;
   status: string;
   description: string;
-  created_at: Date;
+  created_at: string;
 }
 
 const calls = [
@@ -78,17 +80,24 @@ const calls = [
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { navigate } = useNavigation();
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
-  const navigationToEditCall = useCallback(
-    (call: Call) => {
-      navigate('EditCall', { call });
+  const navigationToShowTicket = useCallback(
+    (ticket: Ticket) => {
+      navigate('ShowTicket', { ticket });
     },
     [navigate],
   );
 
-  const navigationToCreateCall = useCallback(() => {
-    navigate('CreateCall');
+  const navigationToCreateTicket = useCallback(() => {
+    navigate('CreateTicket');
   }, [navigate]);
+
+  useEffect(() => {
+    api.get('tickets/me').then(response => {
+      setTickets(response.data);
+    });
+  }, []);
 
   return (
     <Container>
@@ -97,100 +106,102 @@ const Dashboard: React.FC = () => {
           Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
-        <CreateCallButton onPress={navigationToCreateCall}>
-          <CreateCallButtonText>Novo chamado</CreateCallButtonText>
+        <CreateTicketButton onPress={navigationToCreateTicket}>
+          <CreateTicketButtonText>Novo chamado</CreateTicketButtonText>
           <Icon name="plus-circle" size={24} color="#999591" />
-        </CreateCallButton>
+        </CreateTicketButton>
       </Header>
-      <ProvidersList
-        data={calls}
-        keyExtractor={call => call.client}
+      <TicketsList
+        data={tickets}
+        keyExtractor={ticket => ticket.client}
         ListFooterComponent={<View style={{ margin: 32 }} />}
-        ListHeaderComponent={
-          <ProvidersListTitle>Seus chamados</ProvidersListTitle>
-        }
-        renderItem={({ item: call }) => (
-          <ProviderContainer onPress={() => navigationToEditCall(call)}>
-            {call.type === 'Máquina não parada' &&
-            -differenceInDays(call.created_at, Date.now()) < 10 ? (
-              <CallType>
+        ListHeaderComponent={<TicketsListTitle>Seus chamados</TicketsListTitle>}
+        renderItem={({ item: ticket }) => (
+          <TicketContainer onPress={() => navigationToShowTicket(ticket)}>
+            {ticket.type === 'Máquina não parada' &&
+            -differenceInDays(parseISO(ticket.created_at), Date.now()) < 10 ? (
+              <TicketType>
                 <Icon name="alert-circle" size={72} color="#e6fffa" />
-                <CallTypeText>
-                  {-differenceInDays(call.created_at, Date.now())} dias
-                </CallTypeText>
-              </CallType>
+                <TicketTypeText>
+                  {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
+                  dias
+                </TicketTypeText>
+              </TicketType>
             ) : null}
-            {(call.type === 'Máquina parada' &&
-              -differenceInDays(call.created_at, Date.now()) < 2) ||
-            (call.type === 'Máquina não parada' &&
-              -differenceInDays(call.created_at, Date.now()) < 20 &&
-              -differenceInDays(call.created_at, Date.now()) > 9) ? (
-              <CallType>
+            {(ticket.type === 'Máquina parada' &&
+              -differenceInDays(parseISO(ticket.created_at), Date.now()) < 2) ||
+            (ticket.type === 'Máquina não parada' &&
+              -differenceInDays(parseISO(ticket.created_at), Date.now()) < 20 &&
+              -differenceInDays(parseISO(ticket.created_at), Date.now()) >
+                9) ? (
+              <TicketType>
                 <Icon name="alert-triangle" size={72} color="#dec81b" />
-                <CallTypeText>
-                  {-differenceInDays(call.created_at, Date.now())} dias
-                </CallTypeText>
-              </CallType>
+                <TicketTypeText>
+                  {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
+                  dias
+                </TicketTypeText>
+              </TicketType>
             ) : null}
-            {call.type === 'Pendência jurídica' ||
-            (call.type === 'Máquina não parada' &&
-              -differenceInDays(call.created_at, Date.now()) > 19) ||
-            (call.type === 'Máquina parada' &&
-              -differenceInDays(call.created_at, Date.now()) > 1) ? (
-              <CallType>
+            {ticket.type === 'Pendência jurídica' ||
+            (ticket.type === 'Máquina não parada' &&
+              -differenceInDays(parseISO(ticket.created_at), Date.now()) >
+                19) ||
+            (ticket.type === 'Máquina parada' &&
+              -differenceInDays(parseISO(ticket.created_at), Date.now()) >
+                1) ? (
+              <TicketType>
                 <Icon name="alert-octagon" size={72} color="#c53030" />
-                <CallTypeText>
-                  {-differenceInDays(call.created_at, Date.now())} dias
-                </CallTypeText>
-              </CallType>
+                <TicketTypeText>
+                  {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
+                  dias
+                </TicketTypeText>
+              </TicketType>
             ) : null}
 
-            <ProviderInfo>
-              <ProviderName>{call.client}</ProviderName>
-              {call.status === 'Atendido' ? (
-                <ProviderMeta>
+            <TicketInfo>
+              <TicketName>{ticket.client}</TicketName>
+              {ticket.status === 'Atendido' ? (
+                <TicketMeta>
                   <Icon name="check" size={14} color="#78da55" />
-                  <ProviderMetaText type="success">Atendido</ProviderMetaText>
-                </ProviderMeta>
+                  <TicketMetaText type="success">Atendido</TicketMetaText>
+                </TicketMeta>
               ) : null}
-              {call.status === 'Em andamento' ? (
-                <ProviderMeta>
+              {ticket.status === 'Em andamento' ? (
+                <TicketMeta>
                   <Icon name="chevrons-right" size={14} color="#dec81b" />
-                  <ProviderMetaText type="alert">Em andamento</ProviderMetaText>
-                </ProviderMeta>
+                  <TicketMetaText type="alert">Em andamento</TicketMetaText>
+                </TicketMeta>
               ) : null}
-              {call.status === 'Não atendido' ? (
-                <ProviderMeta>
+              {ticket.status === 'Não atendido' ? (
+                <TicketMeta>
                   <Icon name="clock" size={14} color="#c53030" />
-                  <ProviderMetaText type="error">Não atendido</ProviderMetaText>
-                </ProviderMeta>
+                  <TicketMetaText type="error">Não atendido</TicketMetaText>
+                </TicketMeta>
               ) : null}
-              {call.type === 'Máquina não parada' ? (
-                <ProviderMeta>
+              {ticket.type === 'Máquina não parada' ? (
+                <TicketMeta>
                   <Entypo name="tools" size={14} color="#999591" />
-                  <ProviderMetaText type="default">
+                  <TicketMetaText type="default">
                     Máquina não parada
-                  </ProviderMetaText>
-                </ProviderMeta>
+                  </TicketMetaText>
+                </TicketMeta>
               ) : null}
-              {call.type === 'Máquina parada' ? (
-                <ProviderMeta>
+              {ticket.type === 'Máquina parada' ? (
+                <TicketMeta>
                   <Entypo name="tools" size={14} color="#999591" />
-                  <ProviderMetaText type="default">
-                    Máquina parada
-                  </ProviderMetaText>
-                </ProviderMeta>
+                  <TicketMetaText type="default">Máquina parada</TicketMetaText>
+                </TicketMeta>
               ) : null}
-              {call.type === 'Pendência jurídica' ? (
-                <ProviderMeta>
+              {ticket.type === 'Pendência jurídica' ? (
+                <TicketMeta>
                   <Entypo name="tools" size={14} color="#999591" />
-                  <ProviderMetaText type="default">
+                  <TicketMetaText type="default">
                     Pendência jurídica
-                  </ProviderMetaText>
-                </ProviderMeta>
+                  </TicketMetaText>
+                </TicketMeta>
               ) : null}
-            </ProviderInfo>
-          </ProviderContainer>
+            </TicketInfo>
+          </TicketContainer>
         )}
       />
     </Container>

@@ -2,8 +2,9 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Dashboard from '../pages/Dashboard';
-import CreateCall from '../pages/CreateCall';
-import EditCall from '../pages/EditCall';
+import CreateTicket from '../pages/CreateTicket';
+import EditTicket from '../pages/EditTicket';
+import ShowTicket from '../pages/ShowTicket';
 
 const App = createStackNavigator();
 
@@ -15,8 +16,9 @@ const AppRoutes: React.FC = () => (
     }}
   >
     <App.Screen name="Dashboard" component={Dashboard} />
-    <App.Screen name="CreateCall" component={CreateCall} />
-    <App.Screen name="EditCall" component={EditCall} />
+    <App.Screen name="CreateTicket" component={CreateTicket} />
+    <App.Screen name="EditTicket" component={EditTicket} />
+    <App.Screen name="ShowTicket" component={ShowTicket} />
   </App.Navigator>
 );
 
