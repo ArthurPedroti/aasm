@@ -69,12 +69,19 @@ const ShowTicket: React.FC = () => {
                 10 ? (
                 <TicketType>
                   <Icon name="alert-circle" size={72} color="#e6fffa" />
-                  <TicketTypeTitle>{ticket.client}</TicketTypeTitle>
-                  <TicketTypeText>
-                    Chamado aberto à{' '}
-                    {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
-                    dias
-                  </TicketTypeText>
+                  <TicketTypeMeta>
+                    <TicketTypeTitle>{ticket.client}</TicketTypeTitle>
+                    <TicketTypeText>
+                      Chamado aberto à{' '}
+                      {
+                        -differenceInDays(
+                          parseISO(ticket.created_at),
+                          Date.now(),
+                        )
+                      }{' '}
+                      dias
+                    </TicketTypeText>
+                  </TicketTypeMeta>
                 </TicketType>
               ) : null}
               {(ticket.type === 'Máquina parada' &&
@@ -111,11 +118,19 @@ const ShowTicket: React.FC = () => {
                   1) ? (
                 <TicketType>
                   <Icon name="alert-octagon" size={72} color="#c53030" />
-                  <TicketTypeText>
-                    Chamado aberto à{' '}
-                    {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
-                    dias
-                  </TicketTypeText>
+                  <TicketTypeMeta>
+                    <TicketTypeTitle>{ticket.client}</TicketTypeTitle>
+                    <TicketTypeText>
+                      Chamado aberto à{' '}
+                      {
+                        -differenceInDays(
+                          parseISO(ticket.created_at),
+                          Date.now(),
+                        )
+                      }{' '}
+                      dias
+                    </TicketTypeText>
+                  </TicketTypeMeta>
                 </TicketType>
               ) : null}
 

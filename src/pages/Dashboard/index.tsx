@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
-
+import React, { useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { differenceInDays, parseISO } from 'date-fns';
@@ -81,7 +80,6 @@ const calls = [
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
-  // const [tickets, setTickets] = useState<Ticket[]>([]);
   const { data: tickets } = useFetch<Ticket[]>('tickets/me');
 
   const navigationToShowTicket = useCallback(
@@ -92,18 +90,8 @@ const Dashboard: React.FC = () => {
   );
 
   const navigationToCreateTicket = useCallback(() => {
-    navigate('CreateTicket');
+    navigate('CreateUserTicket');
   }, [navigate]);
-
-  // if (!tickets) {
-  //   return <TicketName>Carregando...</TicketName>;
-  // }
-
-  // useEffect(() => {
-  //   api.get('tickets/me').then(response => {
-  //     setTickets(response.data);
-  //   });
-  // }, []);
 
   return (
     <Container>

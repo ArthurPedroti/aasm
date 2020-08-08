@@ -96,7 +96,7 @@ const EditTicket: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Editar Chamado</HeaderTitle>
+        <HeaderTitle>Editar chamado</HeaderTitle>
       </Header>
       <KeyboardAvoidingView
         style={{ flex: 1 }}

@@ -5,12 +5,16 @@ import {
   Platform,
   TextInput,
   Alert,
+  View,
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
+import Picker from '../../components/Picker';
 
 import api from '../../services/api';
 
@@ -22,17 +26,19 @@ import Button from '../../components/Button';
 import { Container, Header, HeaderTitle, BackButton } from './styles';
 
 interface CreateTicketFormData {
-  name: string;
-  email: string;
-  password: string;
+  client: string;
+  equipment: string;
+  type: string;
+  description: string;
 }
 
-const CreateTicket: React.FC = () => {
+const CreateUserTicket: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
 
-  const emailInputRef = useRef<TextInput>(null);
-  const passwordInputRef = useRef<TextInput>(null);
+  const equipmentInputRef = useRef<TextInput>(null);
+  const typeInputRef = useRef<TextInput>(null);
+  const descriptionInputRef = useRef<TextInput>(null);
 
   const handleCreateTicket = useCallback(
     async (data: CreateTicketFormData) => {
@@ -40,23 +46,19 @@ const CreateTicket: React.FC = () => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome obrigatório'),
-          email: Yup.string()
-            .required('E-mail obrigatório')
-            .email('Digite um e-mail válido'),
-          password: Yup.string().min(6, 'No mínimo 6 digitos'),
+          client: Yup.string().required('Cliente obrigatório'),
+          equipment: Yup.string().required('Equipamento obrigatório'),
+          type: Yup.string().required('Tipo obrigatório'),
+          description: Yup.string().required('Descrição obrigatória'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
+        const updatedTicket = await api.post(`/tickets`, data);
 
-        await api.post('/users', data);
-
-        Alert.alert(
-          'Cadastro realizado com sucesso!',
-          'Você já pode fazer login na aplicação',
-        );
+        Alert.alert('Chamado editado com sucesso!');
+        mutateGlobal('tickets/me', { updatedTicket });
 
         navigation.goBack();
       } catch (err) {
@@ -68,7 +70,7 @@ const CreateTicket: React.FC = () => {
 
         Alert.alert(
           'Erro no cadastro',
-          'Ocorreu um erro ao fazer o cadastro, tente novamente.',
+          'Ocorreu um erro ao editar o chamado, tente novamente.',
         );
       }
     },
@@ -82,8 +84,16 @@ const CreateTicket: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Novo Chamado</HeaderTitle>
+        <HeaderTitle>Novo chamado</HeaderTitle>
       </Header>
+      {/* <View>
+        <Picker style={{ width: '100%', color: '#fff' }}>
+          <Picker.Item label="Seleciona o tipo" value="0" />
+          <Picker.Item label="Máquina não parada" value="Máquina não parada" />
+          <Picker.Item label="Máquina parada" value="Máquina parada" />
+          <Picker.Item label="Pendência jurídica" value="Pendência jurídica" />
+        </Picker>
+      </View> */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -94,59 +104,64 @@ const CreateTicket: React.FC = () => {
             <Form ref={formRef} onSubmit={handleCreateTicket}>
               <Input
                 autoCapitalize="words"
-                name="name"
+                name="client"
                 icon="user"
                 placeholder="Cliente"
                 returnKeyType="next"
                 onSubmitEditing={() => {
-                  emailInputRef.current?.focus();
+                  equipmentInputRef.current?.focus();
                 }}
               />
+
               <Input
-                ref={emailInputRef}
-                autoCorrect={false}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                name="email"
-                icon="tag"
-                placeholder="Classificação"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  passwordInputRef.current?.focus();
-                }}
-              />
-              <Input
-                ref={emailInputRef}
-                autoCorrect={false}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                name="email"
+                ref={equipmentInputRef}
+                autoCapitalize="words"
+                name="equipment"
                 icon="settings"
                 placeholder="Equipamento"
                 returnKeyType="next"
                 onSubmitEditing={() => {
-                  passwordInputRef.current?.focus();
+                  typeInputRef.current?.focus();
                 }}
               />
+              <Picker
+                ref={equipmentInputRef}
+                name="equipment"
+                icon="settings"
+                placeholder="Equipamento"
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  typeInputRef.current?.focus();
+                }}
+              >
+                <Picker.Item label="Seleciona o tipo" value="0" />
+                <Picker.Item
+                  label="Máquina não parada"
+                  value="Máquina não parada"
+                />
+                <Picker.Item label="Máquina parada" value="Máquina parada" />
+                <Picker.Item
+                  label="Pendência jurídica"
+                  value="Pendência jurídica"
+                />
+              </Picker>
               <Input
-                ref={emailInputRef}
-                autoCorrect={false}
-                autoCapitalize="none"
-                keyboardType="email-address"
+                ref={typeInputRef}
+                autoCapitalize="words"
                 name="type"
                 icon="tag"
                 placeholder="Tipo"
                 returnKeyType="next"
                 onSubmitEditing={() => {
-                  passwordInputRef.current?.focus();
+                  descriptionInputRef.current?.focus();
                 }}
               />
               <Input
-                ref={passwordInputRef}
-                name="password"
+                ref={descriptionInputRef}
+                autoCapitalize="words"
+                name="description"
                 icon="message-square"
                 placeholder="Descrição"
-                textContentType="newPassword"
                 returnKeyType="send"
                 multiline
                 numberOfLines={8}
@@ -169,4 +184,4 @@ const CreateTicket: React.FC = () => {
     </>
   );
 };
-export default CreateTicket;
+export default CreateUserTicket;
