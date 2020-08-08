@@ -6,6 +6,7 @@ import { differenceInDays, parseISO } from 'date-fns';
 
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
+import { useFetch } from '../../hooks/useFetch';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 
@@ -78,9 +79,10 @@ const calls = [
 ];
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  // const [tickets, setTickets] = useState<Ticket[]>([]);
+  const { data: tickets } = useFetch<Ticket[]>('tickets/me');
 
   const navigationToShowTicket = useCallback(
     (ticket: Ticket) => {
@@ -93,16 +95,20 @@ const Dashboard: React.FC = () => {
     navigate('CreateTicket');
   }, [navigate]);
 
-  useEffect(() => {
-    api.get('tickets/me').then(response => {
-      setTickets(response.data);
-    });
-  }, []);
+  // if (!tickets) {
+  //   return <TicketName>Carregando...</TicketName>;
+  // }
+
+  // useEffect(() => {
+  //   api.get('tickets/me').then(response => {
+  //     setTickets(response.data);
+  //   });
+  // }, []);
 
   return (
     <Container>
       <Header>
-        <HeaderTitle>
+        <HeaderTitle onPress={() => signOut()}>
           Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
@@ -113,7 +119,7 @@ const Dashboard: React.FC = () => {
       </Header>
       <TicketsList
         data={tickets}
-        keyExtractor={ticket => ticket.client}
+        keyExtractor={ticket => ticket.id}
         ListFooterComponent={<View style={{ margin: 32 }} />}
         ListHeaderComponent={<TicketsListTitle>Seus chamados</TicketsListTitle>}
         renderItem={({ item: ticket }) => (

@@ -173,6 +173,10 @@ const ShowTicket: React.FC = () => {
             <Button onPress={() => navigationToEditTicket(ticket)}>
               Editar
             </Button>
+
+            <Button onPress={() => navigationToEditTicket(ticket)}>
+              Deletar
+            </Button>
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>

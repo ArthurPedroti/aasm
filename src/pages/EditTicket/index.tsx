@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
 import api from '../../services/api';
@@ -69,6 +70,7 @@ const EditTicket: React.FC = () => {
         const updatedTicket = await api.put(`/tickets/${ticket.id}/me`, data);
 
         Alert.alert('Chamado editado com sucesso!');
+        mutateGlobal('tickets/me', { updatedTicket });
 
         navigation.navigate('ShowTicket', { ticket: updatedTicket.data });
       } catch (err) {
@@ -94,7 +96,7 @@ const EditTicket: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Chamado</HeaderTitle>
+        <HeaderTitle>Editar Chamado</HeaderTitle>
       </Header>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
