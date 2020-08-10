@@ -6,7 +6,6 @@ import { differenceInDays, parseISO } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
 import { useFetch } from '../../hooks/useFetch';
-import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 
 import {
@@ -37,45 +36,6 @@ export interface Ticket {
   description: string;
   created_at: string;
 }
-
-const calls = [
-  {
-    client: 'Guilherme',
-    class: 'Garantia',
-    equipment: 'Escavadeira',
-    type: 'Máquina não parada',
-    status: 'Em andamento',
-    description: 'Máquina está superaquecendo',
-    created_at: new Date(2020, 6, 30),
-  },
-  {
-    client: 'Arthur',
-    class: 'Garantia',
-    equipment: 'Escavadeira',
-    type: 'Máquina não parada',
-    status: 'Em andamento',
-    description: 'Máquina está superaquecendo',
-    created_at: new Date(2020, 6, 25),
-  },
-  {
-    client: 'João',
-    class: 'Manutenção Preventiva',
-    equipment: 'Escavadeira',
-    type: 'Máquina parada',
-    status: 'Não atendido',
-    description: 'Máquina está superaquecendo',
-    created_at: new Date(2020, 7, 2),
-  },
-  {
-    client: 'Lucas',
-    class: 'Manutenção Corretiva',
-    equipment: 'Escavadeira',
-    type: 'Pendência jurídica',
-    status: 'Atendido',
-    description: 'Máquina está superaquecendo',
-    created_at: new Date(2020, 7, 3),
-  },
-];
 
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();

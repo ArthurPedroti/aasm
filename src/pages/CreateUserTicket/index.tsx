@@ -5,7 +5,6 @@ import {
   Platform,
   TextInput,
   Alert,
-  View,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -14,7 +13,6 @@ import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
-import Picker from '../../components/Picker';
 
 import api from '../../services/api';
 
@@ -22,6 +20,7 @@ import getValidationErrors from '../../utils/getValidationErrors';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import Select from '../../components/Select';
 
 import { Container, Header, HeaderTitle, BackButton } from './styles';
 
@@ -112,7 +111,16 @@ const CreateUserTicket: React.FC = () => {
                   equipmentInputRef.current?.focus();
                 }}
               />
-
+              <Select
+                autoCapitalize="words"
+                name="client"
+                icon="user"
+                placeholder="Cliente"
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  equipmentInputRef.current?.focus();
+                }}
+              />
               <Input
                 ref={equipmentInputRef}
                 autoCapitalize="words"
@@ -124,27 +132,6 @@ const CreateUserTicket: React.FC = () => {
                   typeInputRef.current?.focus();
                 }}
               />
-              <Picker
-                ref={equipmentInputRef}
-                name="equipment"
-                icon="settings"
-                placeholder="Equipamento"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  typeInputRef.current?.focus();
-                }}
-              >
-                <Picker.Item label="Seleciona o tipo" value="0" />
-                <Picker.Item
-                  label="Máquina não parada"
-                  value="Máquina não parada"
-                />
-                <Picker.Item label="Máquina parada" value="Máquina parada" />
-                <Picker.Item
-                  label="Pendência jurídica"
-                  value="Pendência jurídica"
-                />
-              </Picker>
               <Input
                 ref={typeInputRef}
                 autoCapitalize="words"
