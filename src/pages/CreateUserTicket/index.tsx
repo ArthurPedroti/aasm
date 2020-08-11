@@ -5,6 +5,8 @@ import {
   Platform,
   TextInput,
   Alert,
+  Text,
+  View,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -14,6 +16,8 @@ import { FormHandles } from '@unform/core';
 import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
+import { Modalize } from 'react-native-modalize';
+import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -31,7 +35,28 @@ interface CreateTicketFormData {
   description: string;
 }
 
+const items = [
+  {
+    name: 'Arthur',
+  },
+  {
+    name: 'João',
+  },
+  {
+    name: 'Carlos',
+  },
+  {
+    name: 'Rodolfo',
+  },
+];
+
 const CreateUserTicket: React.FC = () => {
+  const modalizeRef = useRef<Modalize>(null);
+
+  const onOpen = (): void => {
+    modalizeRef.current?.open();
+  };
+
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
 
@@ -85,14 +110,19 @@ const CreateUserTicket: React.FC = () => {
 
         <HeaderTitle>Novo chamado</HeaderTitle>
       </Header>
-      {/* <View>
-        <Picker style={{ width: '100%', color: '#fff' }}>
-          <Picker.Item label="Seleciona o tipo" value="0" />
-          <Picker.Item label="Máquina não parada" value="Máquina não parada" />
-          <Picker.Item label="Máquina parada" value="Máquina parada" />
-          <Picker.Item label="Pendência jurídica" value="Pendência jurídica" />
-        </Picker>
-      </View> */}
+      <Modalize ref={modalizeRef} snapPoint={180}>
+        <FlatList
+          data={items}
+          keyExtractor={item => item.name}
+          ListFooterComponent={<View style={{ margin: 32 }} />}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => {}}>
+              <Text>{item.name}</Text>
+              <Icon name="chevron-right" size={20} />
+            </TouchableOpacity>
+          )}
+        />
+      </Modalize>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -101,6 +131,9 @@ const CreateUserTicket: React.FC = () => {
         <ScrollView keyboardShouldPersistTaps="handled">
           <Container>
             <Form ref={formRef} onSubmit={handleCreateTicket}>
+              <TouchableOpacity onPress={onOpen}>
+                <Text style={{ color: '#fff' }}>Modal</Text>
+              </TouchableOpacity>
               <Input
                 autoCapitalize="words"
                 name="client"
