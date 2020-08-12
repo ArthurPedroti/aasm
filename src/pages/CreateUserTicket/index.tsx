@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import {
   ScrollView,
   KeyboardAvoidingView,
@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 
 import { Modalize } from 'react-native-modalize';
 import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
+import axios from 'axios';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -26,13 +27,51 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Select from '../../components/Select';
 
-import { Container, Header, HeaderTitle, BackButton } from './styles';
+import {
+  Container,
+  Header,
+  HeaderTitle,
+  BackButton,
+  Type,
+  Title,
+  Section,
+  SectionContent,
+  TypeOption,
+  TypeText,
+  Item,
+  ItemText,
+  FlatTitle,
+} from './styles';
+import { useFetchUrl } from '../../hooks/useFetchUrl';
 
 interface CreateTicketFormData {
   client: string;
   equipment: string;
   type: string;
   description: string;
+}
+
+interface FlatItemProps {
+  item: Item;
+}
+
+interface Item {
+  name: string;
+}
+
+export interface Client {
+  codigo_cliente: string;
+  razao_social: string;
+  cnpj: string;
+  inscricao_estadual: string;
+  endereco: string;
+  bairro: string;
+  municipio: string;
+  uf: string;
+  cep: string;
+  contato: string;
+  email: string;
+  telefone: string;
 }
 
 const items = [
@@ -50,8 +89,45 @@ const items = [
   },
 ];
 
+const types = [
+  {
+    name: 'Máquina não parada',
+  },
+  {
+    name: 'Máquina parada',
+  },
+  {
+    name: 'Pendência jurídica',
+  },
+];
+
 const CreateUserTicket: React.FC = () => {
+  // const { data: clients } = useFetchUrl<Client[]>(
+  //   'https://jsonplaceholder.typicode.com/todos/1',
+  // );
   const modalizeRef = useRef<Modalize>(null);
+  const [selectedType, setSelectedType] = useState('');
+  const [clients, setClients] = useState([]);
+
+  useEffect(() => {
+    async function loadCategories(): Promise<void> {
+      try {
+        const categoriesList = await axios({
+          url: 'clients',
+          baseURL: 'https://192.168.2.250',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+        });
+        setClients(categoriesList.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    loadCategories();
+  }, [setClients]);
 
   const onOpen = (): void => {
     modalizeRef.current?.open();
@@ -63,6 +139,13 @@ const CreateUserTicket: React.FC = () => {
   const equipmentInputRef = useRef<TextInput>(null);
   const typeInputRef = useRef<TextInput>(null);
   const descriptionInputRef = useRef<TextInput>(null);
+
+  const handleTypeChanged = useCallback(
+    (type: string) => {
+      setSelectedType(type);
+    },
+    [setSelectedType],
+  );
 
   const handleCreateTicket = useCallback(
     async (data: CreateTicketFormData) => {
@@ -101,6 +184,15 @@ const CreateUserTicket: React.FC = () => {
     [navigation],
   );
 
+  const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
+    <Item>
+      <ItemText>{item.name}</ItemText>
+      <Icon name="chevron-right" size={20} />
+    </Item>
+  );
+
+  const headerList = (): React.ReactNode => <FlatTitle>Clientes</FlatTitle>;
+
   return (
     <>
       <Header>
@@ -110,97 +202,96 @@ const CreateUserTicket: React.FC = () => {
 
         <HeaderTitle>Novo chamado</HeaderTitle>
       </Header>
-      <Modalize ref={modalizeRef} snapPoint={180}>
-        <FlatList
-          data={items}
-          keyExtractor={item => item.name}
-          ListFooterComponent={<View style={{ margin: 32 }} />}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => {}}>
-              <Text>{item.name}</Text>
-              <Icon name="chevron-right" size={20} />
-            </TouchableOpacity>
-          )}
-        />
-      </Modalize>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        enabled
-      >
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Container>
-            <Form ref={formRef} onSubmit={handleCreateTicket}>
-              <TouchableOpacity onPress={onOpen}>
-                <Text style={{ color: '#fff' }}>Modal</Text>
-              </TouchableOpacity>
-              <Input
-                autoCapitalize="words"
-                name="client"
-                icon="user"
-                placeholder="Cliente"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  equipmentInputRef.current?.focus();
-                }}
-              />
-              <Select
-                autoCapitalize="words"
-                name="client"
-                icon="user"
-                placeholder="Cliente"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  equipmentInputRef.current?.focus();
-                }}
-              />
-              <Input
-                ref={equipmentInputRef}
-                autoCapitalize="words"
-                name="equipment"
-                icon="settings"
-                placeholder="Equipamento"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  typeInputRef.current?.focus();
-                }}
-              />
-              <Input
-                ref={typeInputRef}
-                autoCapitalize="words"
-                name="type"
-                icon="tag"
-                placeholder="Tipo"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  descriptionInputRef.current?.focus();
-                }}
-              />
-              <Input
-                ref={descriptionInputRef}
-                autoCapitalize="words"
-                name="description"
-                icon="message-square"
-                placeholder="Descrição"
-                returnKeyType="send"
-                multiline
-                numberOfLines={8}
-                onSubmitEditing={() => {
-                  formRef.current?.submitForm();
-                }}
-              />
+      <Modalize
+        ref={modalizeRef}
+        flatListProps={{
+          data: items,
+          renderItem,
+          keyExtractor: (item: Item) => item.name,
+          showsVerticalScrollIndicator: false,
+          ListHeaderComponent: headerList,
+        }}
+        childrenStyle={{ padding: 24 }}
+        snapPoint={180}
+      />
+      <Container>
+        <Form ref={formRef} onSubmit={handleCreateTicket}>
+          <TouchableOpacity onPress={onOpen}>
+            <Text style={{ color: '#fff' }}>Modal</Text>
+          </TouchableOpacity>
+          <Input
+            autoCapitalize="words"
+            name="client"
+            icon="user"
+            placeholder="Cliente"
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              equipmentInputRef.current?.focus();
+            }}
+          />
+          <Select
+            autoCapitalize="words"
+            name="client"
+            action={onOpen}
+            icon="user"
+            placeholder="Cliente"
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              equipmentInputRef.current?.focus();
+            }}
+          />
+          <Input
+            ref={equipmentInputRef}
+            autoCapitalize="words"
+            name="equipment"
+            icon="settings"
+            placeholder="Equipamento"
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              typeInputRef.current?.focus();
+            }}
+          />
+          <Type>
+            <Title>Escolha o tipo</Title>
+            <Section>
+              <SectionContent>
+                {types.map(option => (
+                  <TypeOption
+                    selected={selectedType === option.name}
+                    key={option.name}
+                    onPress={() => handleTypeChanged(option.name)}
+                  >
+                    <TypeText selected={selectedType === option.name}>
+                      {option.name}
+                    </TypeText>
+                  </TypeOption>
+                ))}
+              </SectionContent>
+            </Section>
+          </Type>
+          <Input
+            ref={descriptionInputRef}
+            autoCapitalize="words"
+            name="description"
+            icon="message-square"
+            placeholder="Descrição"
+            returnKeyType="send"
+            multiline
+            numberOfLines={8}
+            onSubmitEditing={() => {
+              formRef.current?.submitForm();
+            }}
+          />
 
-              <Button
-                onPress={() => {
-                  formRef.current?.submitForm();
-                }}
-              >
-                Cadastrar
-              </Button>
-            </Form>
-          </Container>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <Button
+            onPress={() => {
+              formRef.current?.submitForm();
+            }}
+          >
+            Cadastrar
+          </Button>
+        </Form>
+      </Container>
     </>
   );
 };

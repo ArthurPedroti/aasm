@@ -44,6 +44,7 @@ interface InputProps extends TextInputProps {
   name: string;
   icon: string;
   containerStyle?: object;
+  action: Function;
 }
 
 interface InputValueReference {
@@ -55,7 +56,7 @@ interface InputRef {
 }
 
 const Select: React.RefForwardingComponent<InputRef, InputProps> = (
-  { name, icon, containerStyle = {}, ...rest },
+  { name, placeholder, action, icon, containerStyle = {}, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
@@ -110,7 +111,7 @@ const Select: React.RefForwardingComponent<InputRef, InputProps> = (
         style={containerStyle}
         isFocused={isFocused}
         isErrored={!!error}
-        onPress={onOpen}
+        onPress={() => action()}
       >
         <Icon
           name={icon}
@@ -119,7 +120,7 @@ const Select: React.RefForwardingComponent<InputRef, InputProps> = (
         />
 
         <SelectMeta>
-          <SelectText>{inputValueRef.current.value}</SelectText>
+          <SelectText>{placeholder}</SelectText>
           <Icon
             name="chevron-down"
             size={20}
@@ -127,28 +128,6 @@ const Select: React.RefForwardingComponent<InputRef, InputProps> = (
           />
         </SelectMeta>
       </Container>
-
-      <Modalize ref={modalizeRef} snapPoint={180}>
-        <Options
-          data={items}
-          keyExtractor={item => item.name}
-          ListFooterComponent={<View style={{ margin: 32 }} />}
-          renderItem={({ item }) => (
-            <OptionMeta
-              onPress={() => {
-                inputValueRef.current.value = item.name;
-              }}
-            >
-              <OptionText>{item.name}</OptionText>
-              <Icon
-                name="chevron-right"
-                size={20}
-                color={isFocused || isFilled ? '#dec81b' : '#666360'}
-              />
-            </OptionMeta>
-          )}
-        />
-      </Modalize>
     </>
   );
 };

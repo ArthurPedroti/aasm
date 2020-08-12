@@ -1,11 +1,14 @@
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
+import { RectButton } from 'react-native-gesture-handler';
 
-export const Container = styled.View`
+interface TypeProps {
+  selected: boolean;
+}
+
+export const Container = styled.ScrollView`
   flex: 1;
-  align-items: center;
-  justify-content: center;
   padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
 `;
 
@@ -41,4 +44,51 @@ export const BackToSignIn = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+`;
+
+export const Type = styled.View``;
+
+export const Title = styled.Text`
+  color: #999591;
+  font-size: 18px;
+  margin-bottom: 10px;
+`;
+
+export const Section = styled.View`
+  margin-bottom: 16px;
+`;
+
+export const SectionContent = styled.ScrollView.attrs({
+  horizontal: true,
+  showsHorizontalScrollIndicator: false,
+})``;
+
+export const TypeOption = styled(RectButton)<TypeProps>`
+  padding: 12px;
+  background: ${props => (props.selected ? '#dec81b' : '#3e3b47')};
+  border-radius: 10px;
+  margin-right: 8px;
+`;
+
+export const TypeText = styled.Text<TypeProps>`
+  color: ${props => (props.selected ? '#232129' : '#f4ede8')};
+  font-size: 16px;
+`;
+
+export const Item = styled.TouchableOpacity`
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const ItemText = styled.Text`
+  font-size: 16px;
+  margin-bottom: 12px;
+`;
+
+export const FlatTitle = styled.Text`
+  font-size: 24px;
+  align-self: center;
+  margin-bottom: 36px;
 `;
