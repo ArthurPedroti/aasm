@@ -1,13 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import {
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-  Alert,
-  Text,
-  View,
-} from 'react-native';
+import { TextInput, Alert, Text } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
@@ -17,8 +9,8 @@ import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
 import { Modalize } from 'react-native-modalize';
-import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
-import axios from 'axios';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useProtheusFetch } from '../../hooks/useProtheusFetch';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -26,6 +18,7 @@ import getValidationErrors from '../../utils/getValidationErrors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Select from '../../components/Select';
+import SearchInput from '../../components/SearchInput';
 
 import {
   Container,
@@ -41,8 +34,9 @@ import {
   Item,
   ItemText,
   FlatTitle,
+  HeaderModal,
+  FooterText,
 } from './styles';
-import { useFetchUrl } from '../../hooks/useFetchUrl';
 
 interface CreateTicketFormData {
   client: string;
@@ -52,7 +46,7 @@ interface CreateTicketFormData {
 }
 
 interface FlatItemProps {
-  item: Item;
+  item: Client;
 }
 
 interface Item {
@@ -107,27 +101,47 @@ const CreateUserTicket: React.FC = () => {
   // );
   const modalizeRef = useRef<Modalize>(null);
   const [selectedType, setSelectedType] = useState('');
-  const [clients, setClients] = useState([]);
+  const { data: clients } = useProtheusFetch<Client[]>('clients');
+
+  // search
+  const [currentPage, setCurrentPage] = useState(1);
+  const [clientsPerPage, setClientsPerPage] = useState(20);
+  const [clientsFiltered, setClientsFiltered] = useState<Client[]>([]);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    async function loadCategories(): Promise<void> {
-      try {
-        const categoriesList = await axios({
-          url: 'clients',
-          baseURL: 'https://192.168.2.250',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Accept: 'application/json',
-          },
-        });
-        setClients(categoriesList.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    if (clients) {
+      const indexOfLastClient = currentPage * clientsPerPage;
+      const indexOfFirsClient = indexOfLastClient - clientsPerPage;
+      const filteredList = clients.filter((client: Client) => {
+        if (
+          client.razao_social
+            .toLocaleUpperCase()
+            .includes(searchValue.toLocaleUpperCase())
+        ) {
+          return client;
+        }
+        return null;
+      });
+      const currentClients = filteredList.slice(
+        indexOfFirsClient,
+        indexOfLastClient,
+      );
 
-    loadCategories();
-  }, [setClients]);
+      setClientsFiltered(currentClients);
+    }
+  }, [clients, clientsPerPage, currentPage, searchValue]);
+
+  // useEffect(() => {
+  //   apiProtheus
+  //     .get('/clients')
+  //     .then(response => {
+  //       console.log(response.data);
+  //     })
+  //     .catch(error => {
+  //       console.log('error', error);
+  //     });
+  // }, []);
 
   const onOpen = (): void => {
     modalizeRef.current?.open();
@@ -185,13 +199,11 @@ const CreateUserTicket: React.FC = () => {
   );
 
   const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
-    <Item>
-      <ItemText>{item.name}</ItemText>
+    <Item onPress={() => console.log(item.razao_social)}>
+      <ItemText>{item.razao_social.slice(0, 35)}</ItemText>
       <Icon name="chevron-right" size={20} />
     </Item>
   );
-
-  const headerList = (): React.ReactNode => <FlatTitle>Clientes</FlatTitle>;
 
   return (
     <>
@@ -205,30 +217,31 @@ const CreateUserTicket: React.FC = () => {
       <Modalize
         ref={modalizeRef}
         flatListProps={{
-          data: items,
+          data: clientsFiltered,
           renderItem,
-          keyExtractor: (item: Item) => item.name,
+          keyExtractor: (item: Client) => item.cnpj,
           showsVerticalScrollIndicator: false,
-          ListHeaderComponent: headerList,
+          ListHeaderComponent: (
+            <HeaderModal>
+              <FlatTitle>Clientes</FlatTitle>
+              <SearchInput
+                value={searchValue}
+                onChangeText={setSearchValue}
+                placeholder="Qual comida você procura?"
+              />
+            </HeaderModal>
+          ),
+          ListFooterComponent: (
+            <HeaderModal>
+              <FooterText>Para mais resultados use a pesquisa!</FooterText>
+            </HeaderModal>
+          ),
         }}
         childrenStyle={{ padding: 24 }}
-        snapPoint={180}
+        keyboardAvoidingBehavior="height"
       />
       <Container>
         <Form ref={formRef} onSubmit={handleCreateTicket}>
-          <TouchableOpacity onPress={onOpen}>
-            <Text style={{ color: '#fff' }}>Modal</Text>
-          </TouchableOpacity>
-          <Input
-            autoCapitalize="words"
-            name="client"
-            icon="user"
-            placeholder="Cliente"
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              equipmentInputRef.current?.focus();
-            }}
-          />
           <Select
             autoCapitalize="words"
             name="client"

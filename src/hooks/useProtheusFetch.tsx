@@ -1,4 +1,5 @@
 import useSWR from 'swr';
+import apiProtheus from '../services/apiProtheus';
 
 interface Response {
   data: any;
@@ -6,14 +7,15 @@ interface Response {
   mutate: any;
 }
 
-export function useFetchUrl<Data = any, Error = any>(url: string): Response {
+export function useProtheusFetch<Data = any, Error = any>(
+  url: string,
+): Response {
   const { data, error, mutate } = useSWR<Data, Error>(
     url,
     async urlparam => {
-      console.log('zqui');
-      const response = await fetch(urlparam);
-      const responseData = await response.json();
-      return responseData;
+      const response = await apiProtheus.get(urlparam);
+
+      return response.data;
     },
     {
       refreshInterval: 5000,

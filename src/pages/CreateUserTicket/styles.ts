@@ -76,19 +76,29 @@ export const TypeText = styled.Text<TypeProps>`
 `;
 
 export const Item = styled.TouchableOpacity`
-  flex: 1;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 `;
 
 export const ItemText = styled.Text`
+  flex: 1;
   font-size: 16px;
-  margin-bottom: 12px;
 `;
 
 export const FlatTitle = styled.Text`
   font-size: 24px;
   align-self: center;
-  margin-bottom: 36px;
+  margin-bottom: 12px;
+`;
+
+export const HeaderModal = styled.View`
+  margin-bottom: 20px;
+`;
+
+export const FooterText = styled.Text`
+  color: #3e3b47;
+  margin-top: 30px;
+  align-self: center;
 `;

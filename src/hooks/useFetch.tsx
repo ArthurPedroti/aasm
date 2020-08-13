@@ -12,7 +12,6 @@ export function useFetch<Data = any, Error = any>(url: string): Response {
     url,
     async urlparam => {
       const response = await api.get(urlparam);
-
       return response.data;
     },
     {
