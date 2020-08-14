@@ -6,45 +6,16 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from 'react';
-import { TextInputProps, View, TouchableOpacity, Text } from 'react-native';
+import { TextInputProps } from 'react-native';
 import { useField } from '@unform/core';
-import { Modalize } from 'react-native-modalize';
 
-import {
-  Container,
-  SelectMeta,
-  TextInput,
-  SelectText,
-  Icon,
-  Options,
-  OptionMeta,
-  OptionText,
-} from './styles';
-
-const items = [
-  {
-    name: 'Arthur',
-  },
-  {
-    name: 'João',
-  },
-  {
-    name: 'Carlos',
-  },
-  {
-    name: 'Rodolfo',
-  },
-];
-
-export interface ListItem {
-  name: string;
-}
+import { Container, TextInput, Icon, Placeholder } from './styles';
 
 interface InputProps extends TextInputProps {
   name: string;
+  action: Function;
   icon: string;
   containerStyle?: object;
-  action: Function;
 }
 
 interface InputValueReference {
@@ -56,16 +27,10 @@ interface InputRef {
 }
 
 const Select: React.RefForwardingComponent<InputRef, InputProps> = (
-  { name, placeholder, action, icon, containerStyle = {}, ...rest },
+  { name, value, placeholder, action, icon, containerStyle = {}, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
-
-  const modalizeRef = useRef<Modalize>(null);
-
-  const onOpen = (): void => {
-    modalizeRef.current?.open();
-  };
 
   const { registerField, defaultValue = '', fieldName, error } = useField(name);
   const inputValueRef = useRef<InputValueReference>({ value: defaultValue });
@@ -94,9 +59,9 @@ const Select: React.RefForwardingComponent<InputRef, InputProps> = (
       name: fieldName,
       ref: inputValueRef.current,
       path: 'value',
-      setValue(value) {
-        inputValueRef.current.value = value;
-        inputElementRef.current.setNativeProps({ text: value });
+      setValue(value2) {
+        inputValueRef.current.value = value2;
+        inputElementRef.current.setNativeProps({ text: value2 });
       },
       clearValue() {
         inputValueRef.current.value = '';
@@ -106,29 +71,31 @@ const Select: React.RefForwardingComponent<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <>
-      <Container
-        style={containerStyle}
-        isFocused={isFocused}
-        isErrored={!!error}
-        onPress={() => action()}
-      >
-        <Icon
-          name={icon}
-          size={20}
-          color={isFocused || isFilled ? '#dec81b' : '#666360'}
-        />
+    <Container
+      onPress={() => action()}
+      style={containerStyle}
+      isFocused={isFocused}
+      isErrored={!!error}
+    >
+      <Icon name={icon} size={20} color={value ? '#dec81b' : '#666360'} />
+      {value ? (
+        <TextInput
+          ref={inputElementRef}
+          keyboardAppearance="dark"
+          placeholderTextColor="#666360"
+          defaultValue={defaultValue}
+          onFocus={() => action()}
+          onBlur={handleInputBlur}
+          {...rest}
+        >
+          {value}
+        </TextInput>
+      ) : (
+        <Placeholder>{placeholder}</Placeholder>
+      )}
 
-        <SelectMeta>
-          <SelectText>{placeholder}</SelectText>
-          <Icon
-            name="chevron-down"
-            size={20}
-            color={isFocused || isFilled ? '#dec81b' : '#666360'}
-          />
-        </SelectMeta>
-      </Container>
-    </>
+      <Icon name="chevron-down" size={20} color={value ? '#fff' : '#666360'} />
+    </Container>
   );
 };
 

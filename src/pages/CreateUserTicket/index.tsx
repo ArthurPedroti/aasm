@@ -36,6 +36,7 @@ import {
   FlatTitle,
   HeaderModal,
   FooterText,
+  ItemContent,
 } from './styles';
 
 interface CreateTicketFormData {
@@ -101,18 +102,25 @@ const CreateUserTicket: React.FC = () => {
   // );
   const modalizeRef = useRef<Modalize>(null);
   const [selectedType, setSelectedType] = useState('');
-  const { data: clients } = useProtheusFetch<Client[]>('clients');
+  const { data: clients, error } = useProtheusFetch<Client[]>('clients');
+  const [selectedClient, setSelectedClient] = useState<Client>({} as Client);
 
   // search
-  const [currentPage, setCurrentPage] = useState(1);
-  const [clientsPerPage, setClientsPerPage] = useState(20);
   const [clientsFiltered, setClientsFiltered] = useState<Client[]>([]);
   const [searchValue, setSearchValue] = useState('');
 
+  const formRef = useRef<FormHandles>(null);
+  const navigation = useNavigation();
+
+  const equipmentInputRef = useRef<TextInput>(null);
+  const typeInputRef = useRef<TextInput>(null);
+  const descriptionInputRef = useRef<TextInput>(null);
+
   useEffect(() => {
     if (clients) {
-      const indexOfLastClient = currentPage * clientsPerPage;
-      const indexOfFirsClient = indexOfLastClient - clientsPerPage;
+      // current page = 1 / clientsPerPage = 20
+      const indexOfLastClient = 1 * 20;
+      const indexOfFirsClient = indexOfLastClient - 20;
       const filteredList = clients.filter((client: Client) => {
         if (
           client.razao_social
@@ -130,29 +138,17 @@ const CreateUserTicket: React.FC = () => {
 
       setClientsFiltered(currentClients);
     }
-  }, [clients, clientsPerPage, currentPage, searchValue]);
+  }, [clients, searchValue]);
 
-  // useEffect(() => {
-  //   apiProtheus
-  //     .get('/clients')
-  //     .then(response => {
-  //       console.log(response.data);
-  //     })
-  //     .catch(error => {
-  //       console.log('error', error);
-  //     });
-  // }, []);
+  const handleSelectClient = useCallback(item => {
+    setSelectedClient(item);
+    // formRef.current?.setFieldValue('client', 'John Doe');
+    modalizeRef.current?.close();
+  }, []);
 
-  const onOpen = (): void => {
+  const onOpen = useCallback(() => {
     modalizeRef.current?.open();
-  };
-
-  const formRef = useRef<FormHandles>(null);
-  const navigation = useNavigation();
-
-  const equipmentInputRef = useRef<TextInput>(null);
-  const typeInputRef = useRef<TextInput>(null);
-  const descriptionInputRef = useRef<TextInput>(null);
+  }, []);
 
   const handleTypeChanged = useCallback(
     (type: string) => {
@@ -199,8 +195,11 @@ const CreateUserTicket: React.FC = () => {
   );
 
   const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
-    <Item onPress={() => console.log(item.razao_social)}>
-      <ItemText>{item.razao_social.slice(0, 35)}</ItemText>
+    <Item onPress={() => handleSelectClient(item)}>
+      <ItemContent>
+        <ItemText>{item.razao_social.slice(0, 35)}</ItemText>
+        {item.cnpj !== '' ? <ItemText>CNPJ: {item.cnpj}</ItemText> : null}
+      </ItemContent>
       <Icon name="chevron-right" size={20} />
     </Item>
   );
@@ -248,6 +247,7 @@ const CreateUserTicket: React.FC = () => {
             action={onOpen}
             icon="user"
             placeholder="Cliente"
+            value={selectedClient.razao_social}
             returnKeyType="next"
             onSubmitEditing={() => {
               equipmentInputRef.current?.focus();

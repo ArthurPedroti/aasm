@@ -27,7 +27,6 @@ export const TextInput = styled.TextInput`
   flex: 1;
   color: #6c6c80;
   font-size: 16px;
-  font-family: 'Poppins-Regular';
 `;
 
 export const Icon = styled(FeatherIcon)`

@@ -102,3 +102,5 @@ export const FooterText = styled.Text`
   margin-top: 30px;
   align-self: center;
 `;
+
+export const ItemContent = styled.View``;
