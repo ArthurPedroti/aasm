@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { TextInput, Alert, Text } from 'react-native';
+import { TextInput, Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,6 @@ import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
 import { Modalize } from 'react-native-modalize';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useProtheusFetch } from '../../hooks/useProtheusFetch';
 import api from '../../services/api';
 
@@ -28,6 +27,8 @@ import {
   Type,
   Title,
   Section,
+  SectionMetaTitle,
+  SectionError,
   SectionContent,
   TypeOption,
   TypeText,
@@ -69,21 +70,6 @@ export interface Client {
   telefone: string;
 }
 
-const items = [
-  {
-    name: 'Arthur',
-  },
-  {
-    name: 'João',
-  },
-  {
-    name: 'Carlos',
-  },
-  {
-    name: 'Rodolfo',
-  },
-];
-
 const types = [
   {
     name: 'Máquina não parada',
@@ -102,8 +88,10 @@ const CreateUserTicket: React.FC = () => {
   // );
   const modalizeRef = useRef<Modalize>(null);
   const [selectedType, setSelectedType] = useState('');
-  const { data: clients, error } = useProtheusFetch<Client[]>('clients');
+  const { data: clients } = useProtheusFetch<Client[]>('clients');
   const [selectedClient, setSelectedClient] = useState<Client>({} as Client);
+  const [clientError, setClientError] = useState(false);
+  const [typeError, setTypeError] = useState('');
 
   // search
   const [clientsFiltered, setClientsFiltered] = useState<Client[]>([]);
@@ -142,7 +130,6 @@ const CreateUserTicket: React.FC = () => {
 
   const handleSelectClient = useCallback(item => {
     setSelectedClient(item);
-    // formRef.current?.setFieldValue('client', 'John Doe');
     modalizeRef.current?.close();
   }, []);
 
@@ -161,20 +148,41 @@ const CreateUserTicket: React.FC = () => {
     async (data: CreateTicketFormData) => {
       try {
         formRef.current?.setErrors({});
+        setTypeError('');
+        setClientError(false);
 
         const schema = Yup.object().shape({
-          client: Yup.string().required('Cliente obrigatório'),
           equipment: Yup.string().required('Equipamento obrigatório'),
-          type: Yup.string().required('Tipo obrigatório'),
           description: Yup.string().required('Descrição obrigatória'),
         });
+        if (selectedClient.codigo_cliente === undefined) {
+          setClientError(true);
+          await schema.validate(data, {
+            abortEarly: false,
+          });
+          return;
+        }
+        if (selectedType === '') {
+          setTypeError('Selecione o tipo!');
+          return;
+        }
 
         await schema.validate(data, {
           abortEarly: false,
         });
-        const updatedTicket = await api.post(`/tickets`, data);
+        console.log('tesete');
+        const completeData = {
+          ...data,
+          client_id: selectedClient.codigo_cliente,
+          client_name: selectedClient.razao_social,
+          client_cnpj: selectedClient.cnpj,
+          type: selectedType,
+        };
+        console.log(completeData);
 
-        Alert.alert('Chamado editado com sucesso!');
+        const updatedTicket = await api.post(`/tickets`, completeData);
+
+        Alert.alert('Chamado criado com sucesso!');
         mutateGlobal('tickets/me', { updatedTicket });
 
         navigation.goBack();
@@ -187,11 +195,11 @@ const CreateUserTicket: React.FC = () => {
 
         Alert.alert(
           'Erro no cadastro',
-          'Ocorreu um erro ao editar o chamado, tente novamente.',
+          'Ocorreu um erro ao criar o chamado, tente novamente.',
         );
       }
     },
-    [navigation],
+    [navigation, selectedClient, selectedType],
   );
 
   const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
@@ -226,7 +234,7 @@ const CreateUserTicket: React.FC = () => {
               <SearchInput
                 value={searchValue}
                 onChangeText={setSearchValue}
-                placeholder="Qual comida você procura?"
+                placeholder="Qual cliente você procura?"
               />
             </HeaderModal>
           ),
@@ -243,7 +251,7 @@ const CreateUserTicket: React.FC = () => {
         <Form ref={formRef} onSubmit={handleCreateTicket}>
           <Select
             autoCapitalize="words"
-            name="client"
+            error={clientError}
             action={onOpen}
             icon="user"
             placeholder="Cliente"
@@ -265,7 +273,10 @@ const CreateUserTicket: React.FC = () => {
             }}
           />
           <Type>
-            <Title>Escolha o tipo</Title>
+            <SectionMetaTitle>
+              <Title>Escolha o tipo</Title>
+              <SectionError>{typeError}</SectionError>
+            </SectionMetaTitle>
             <Section>
               <SectionContent>
                 {types.map(option => (

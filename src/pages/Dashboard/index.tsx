@@ -28,7 +28,7 @@ import {
 
 export interface Ticket {
   id: string;
-  client: string;
+  client_name: string;
   class: string;
   equipment: string;
   type: string;
@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
             ) : null}
 
             <TicketInfo>
-              <TicketName>{ticket.client}</TicketName>
+              <TicketName>{ticket.client_name}</TicketName>
               {ticket.status === 'Atendido' ? (
                 <TicketMeta>
                   <Icon name="check" size={14} color="#78da55" />

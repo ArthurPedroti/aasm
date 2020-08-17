@@ -51,11 +51,21 @@ export const Type = styled.View``;
 export const Title = styled.Text`
   color: #999591;
   font-size: 18px;
-  margin-bottom: 10px;
 `;
 
 export const Section = styled.View`
   margin-bottom: 16px;
+`;
+
+export const SectionMetaTitle = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+export const SectionError = styled.Text`
+  color: #c53030;
+  font-size: 16px;
 `;
 
 export const SectionContent = styled.ScrollView.attrs({
