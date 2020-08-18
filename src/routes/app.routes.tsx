@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Dashboard from '../pages/Dashboard';
 import CreateUserTicket from '../pages/CreateUserTicket';
-import EditTicket from '../pages/EditTicket';
+import EditUserTicket from '../pages/EditUserTicket';
 import ShowTicket from '../pages/ShowTicket';
 
 const App = createStackNavigator();
@@ -17,7 +17,7 @@ const AppRoutes: React.FC = () => (
   >
     <App.Screen name="Dashboard" component={Dashboard} />
     <App.Screen name="CreateUserTicket" component={CreateUserTicket} />
-    <App.Screen name="EditTicket" component={EditTicket} />
+    <App.Screen name="EditUserTicket" component={EditUserTicket} />
     <App.Screen name="ShowTicket" component={ShowTicket} />
   </App.Navigator>
 );

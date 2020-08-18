@@ -25,12 +25,6 @@ export const Container = styled.TouchableOpacity<ContainerProps>`
     css`
       border-color: #c53030;
     `}
-
-  ${props =>
-    props.isFocused &&
-    css`
-      border-color: #dec81b;
-    `}
 `;
 
 export const TextInput = styled.Text`

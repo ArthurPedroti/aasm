@@ -37,6 +37,12 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
+  useEffect(() => {
+    if (inputValueRef.current.value) {
+      setIsFilled(true);
+    }
+  }, [inputValueRef]);
+
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
   }, []);

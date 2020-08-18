@@ -72,6 +72,7 @@ export const TicketType = styled.View`
 `;
 
 export const TicketTypeMeta = styled.View`
+  flex: 1;
   margin-left: 20px;
 `;
 
@@ -110,6 +111,7 @@ export const TicketContainer = styled(RectButton)`
 
 export const TicketInfo = styled.View`
   flex: 1;
+  width: 100%;
   margin-top: 20px;
 `;
 
@@ -120,9 +122,9 @@ export const TicketName = styled.Text`
 `;
 
 export const TicketMeta = styled.View`
+  margin-top: 8px;
   flex-direction: row;
   align-items: center;
-  margin-top: 8px;
 `;
 
 export const TicketMetaText = styled.Text<ContainerProps>`

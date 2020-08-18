@@ -1,9 +1,16 @@
 import React, { useCallback } from 'react';
-import { ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { differenceInDays, parseISO, format } from 'date-fns';
+import { mutate as mutateGlobal } from 'swr';
 
+import api from '../../services/api';
 import Button from '../../components/Button';
 
 import {
@@ -24,12 +31,13 @@ import {
 interface RouteParams {
   ticket: {
     id: string;
-    client: string;
+    client_name: string;
     classification: string;
     equipment: string;
     type: string;
     status: string;
     description: string;
+    updated_at: string;
     created_at: string;
   };
 }
@@ -42,10 +50,32 @@ const ShowTicket: React.FC = () => {
 
   const navigationToEditTicket = useCallback(
     ticketRecieved => {
-      navigation.navigate('EditTicket', { ticket: ticketRecieved });
+      navigation.navigate('EditUserTicket', { ticket: ticketRecieved });
     },
     [navigation],
   );
+
+  const handleDelete = useCallback(async () => {
+    await api.delete(`/tickets/${ticket.id}`);
+
+    Alert.alert('Chamado editado com sucesso!');
+    mutateGlobal('tickets/me');
+
+    navigation.navigate('Dashboard');
+  }, [navigation, ticket]);
+
+  const handleDeleteTicket = useCallback(() => {
+    Alert.alert('Você tem certeza que deseja deletar esse chamado?', '', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Deletar',
+        onPress: () => handleDelete(),
+      },
+    ]);
+  }, [handleDelete]);
 
   return (
     <>
@@ -70,7 +100,7 @@ const ShowTicket: React.FC = () => {
                 <TicketType>
                   <Icon name="alert-circle" size={72} color="#e6fffa" />
                   <TicketTypeMeta>
-                    <TicketTypeTitle>{ticket.client}</TicketTypeTitle>
+                    <TicketTypeTitle>{ticket.client_name}</TicketTypeTitle>
                     <TicketTypeText>
                       Chamado aberto à{' '}
                       {
@@ -95,7 +125,7 @@ const ShowTicket: React.FC = () => {
                 <TicketType>
                   <Icon name="alert-triangle" size={72} color="#dec81b" />
                   <TicketTypeMeta>
-                    <TicketTypeTitle>{ticket.client}</TicketTypeTitle>
+                    <TicketTypeTitle>{ticket.client_name}</TicketTypeTitle>
                     <TicketTypeText>
                       Chamado aberto à{' '}
                       {
@@ -119,7 +149,7 @@ const ShowTicket: React.FC = () => {
                 <TicketType>
                   <Icon name="alert-octagon" size={72} color="#c53030" />
                   <TicketTypeMeta>
-                    <TicketTypeTitle>{ticket.client}</TicketTypeTitle>
+                    <TicketTypeTitle>{ticket.client_name}</TicketTypeTitle>
                     <TicketTypeText>
                       Chamado aberto à{' '}
                       {
@@ -182,6 +212,16 @@ const ShowTicket: React.FC = () => {
                     {format(parseISO(ticket.created_at), 'dd/MM/yyyy')}
                   </TicketMetaText>
                 </TicketMeta>
+                <TicketMeta>
+                  <Icon name="chevron-right" size={14} color="#999591" />
+                  <TicketMetaText type="default">
+                    Última atualização:{' '}
+                    {format(
+                      parseISO(ticket.updated_at),
+                      "dd/MM/yyyy 'às' HH:mm'h'",
+                    )}
+                  </TicketMetaText>
+                </TicketMeta>
               </TicketInfo>
             </TicketContainer>
 
@@ -189,7 +229,7 @@ const ShowTicket: React.FC = () => {
               Editar
             </Button>
 
-            <Button onPress={() => navigationToEditTicket(ticket)}>
+            <Button type="error" onPress={() => handleDeleteTicket()}>
               Deletar
             </Button>
           </Container>

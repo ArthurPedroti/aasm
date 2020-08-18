@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays, parseISO, format } from 'date-fns';
 
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
+import { subHours } from 'date-fns/esm';
 import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
 
@@ -34,6 +35,7 @@ export interface Ticket {
   type: string;
   status: string;
   description: string;
+  updated_at: string;
   created_at: string;
 }
 
@@ -154,6 +156,15 @@ const Dashboard: React.FC = () => {
                   </TicketMetaText>
                 </TicketMeta>
               ) : null}
+              <TicketMeta>
+                <Icon name="activity" size={14} color="#999591" />
+                <TicketMetaText type="default">
+                  {format(
+                    subHours(parseISO(ticket.updated_at), 3),
+                    "dd/MM/yyyy 'às' HH:mm'h'",
+                  )}
+                </TicketMetaText>
+              </TicketMeta>
             </TicketInfo>
           </TicketContainer>
         )}
