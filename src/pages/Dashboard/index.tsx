@@ -69,6 +69,10 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (data !== undefined) {
+      if (data.length === undefined) {
+        return;
+      }
+
       setTickets(data.slice(0, 20));
     }
   }, [data]);
