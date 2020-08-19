@@ -59,7 +59,7 @@ const ShowTicket: React.FC = () => {
     await api.delete(`/tickets/${ticket.id}`);
 
     Alert.alert('Chamado editado com sucesso!');
-    mutateGlobal('tickets/me');
+    mutateGlobal('tickets');
 
     navigation.navigate('Dashboard');
   }, [navigation, ticket]);

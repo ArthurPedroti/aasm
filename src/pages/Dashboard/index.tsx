@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { differenceInDays, parseISO, format } from 'date-fns';
@@ -6,6 +6,7 @@ import { differenceInDays, parseISO, format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
 import { subHours } from 'date-fns/esm';
+import { useInfinityFetch } from '../../hooks/useInfinityFetch';
 import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
 
@@ -26,6 +27,7 @@ import {
   TicketType,
   TicketTypeText,
 } from './styles';
+import api from '../../services/api';
 
 export interface Ticket {
   id: string;
@@ -42,7 +44,77 @@ export interface Ticket {
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
-  const { data: tickets } = useFetch<Ticket[]>('tickets/me');
+  const { data } = useFetch<Ticket[]>('tickets');
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(2);
+  const [loading, setLoading] = useState(false);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [searchValue, setSearchValue] = useState('');
+  const clientsPerPage = 1;
+
+  // const tickets = data ? [].concat(...data) : [];
+  // const isLoadingInitialData = !data && !error;
+  // const isLoadingMore =
+  //   isLoadingInitialData ||
+  //   (size > 0 && data && typeof data[size - 1] === 'undefined');
+  // const isEmpty = data?.[0]?.length === 0;
+  // const isReachingEnd = isEmpty || (data && data[data.length - 1]?.length < 1);
+  // const isRefreshing = isValidating && data && data.length === size;
+
+  // const loadTickets = useCallback(() => {
+  //   if (!isReachingEnd && !isLoadingMore) {
+  //     setSize(size + 1);
+  //   }
+  // }, [isReachingEnd, isLoadingMore, setSize, size]);
+
+  useEffect(() => {
+    if (data !== undefined) {
+      setTickets(data.slice(0, 20));
+    }
+  }, [data]);
+
+  const loadTickets = useCallback(async () => {
+    // if (data) {
+    //   setTickets(data);
+    // }
+    console.log('laoding');
+    if (!data) {
+      console.log('data');
+      return;
+    }
+
+    if (loading) {
+      console.log('loading');
+      return;
+    }
+
+    if (total > 0 && tickets.length === total) {
+      console.log('3');
+      return;
+    }
+
+    setLoading(true);
+    const indexOfLastClient = 1;
+    const indexOfFirsClient = page * clientsPerPage;
+    const filteredList = data.filter((ticket: Ticket) => {
+      if (
+        ticket.client_name
+          .toLocaleUpperCase()
+          .includes(searchValue.toLocaleUpperCase())
+      ) {
+        return ticket;
+      }
+      return null;
+    });
+    const currentTickets = filteredList.slice(
+      indexOfFirsClient,
+      indexOfLastClient,
+    );
+
+    setTickets([...tickets, ...currentTickets]);
+    setPage(page + 1);
+    setLoading(false);
+  }, [data, loading, page, searchValue, tickets, total]);
 
   const navigationToShowTicket = useCallback(
     (ticket: Ticket) => {
@@ -69,7 +141,9 @@ const Dashboard: React.FC = () => {
       </Header>
       <TicketsList
         data={tickets}
+        onEndReached={loadTickets}
         keyExtractor={ticket => ticket.id}
+        onEndReachedThreshold={0.2}
         ListFooterComponent={<View style={{ margin: 32 }} />}
         ListHeaderComponent={<TicketsListTitle>Seus chamados</TicketsListTitle>}
         renderItem={({ item: ticket }) => (

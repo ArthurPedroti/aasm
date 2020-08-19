@@ -210,7 +210,7 @@ const EditUserTicket: React.FC = () => {
         );
 
         Alert.alert('Chamado editado com sucesso!');
-        mutateGlobal('tickets/me', { updatedTicket });
+        mutateGlobal('tickets', { updatedTicket });
 
         navigation.navigate('ShowTicket', { ticket: updatedTicket.data });
       } catch (err) {
