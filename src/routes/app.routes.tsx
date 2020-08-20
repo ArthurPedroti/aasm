@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Dashboard from '../pages/Dashboard';
+import AdminDashboard from '../pages/AdminDashboard';
 import CreateUserTicket from '../pages/CreateUserTicket';
 import EditUserTicket from '../pages/EditUserTicket';
 import ShowTicket from '../pages/ShowTicket';
@@ -15,6 +16,7 @@ const AppRoutes: React.FC = () => (
       cardStyle: { backgroundColor: '#312e38' },
     }}
   >
+    <App.Screen name="AdminDashboard" component={AdminDashboard} />
     <App.Screen name="Dashboard" component={Dashboard} />
     <App.Screen name="CreateUserTicket" component={CreateUserTicket} />
     <App.Screen name="EditUserTicket" component={EditUserTicket} />

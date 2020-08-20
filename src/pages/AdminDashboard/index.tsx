@@ -41,7 +41,7 @@ export interface Ticket {
   created_at: string;
 }
 
-const Dashboard: React.FC = () => {
+const AdminDashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
   const { data } = useFetch<Ticket[]>('tickets');
@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
     <Container>
       <Header>
         <HeaderTitle onPress={() => signOut()}>
-          Bem vindo, {'\n'}
+          Bem vindo, Admin {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
         <CreateTicketButton onPress={navigationToCreateTicket}>
@@ -252,4 +252,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;
