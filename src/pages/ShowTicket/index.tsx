@@ -7,11 +7,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { differenceInDays, parseISO, format } from 'date-fns';
+import { differenceInDays, parseISO, format, subHours } from 'date-fns';
 import { mutate as mutateGlobal } from 'swr';
 
 import api from '../../services/api';
 import Button from '../../components/Button';
+import { useAuth } from '../../hooks/auth';
 
 import {
   Container,
@@ -44,24 +45,34 @@ interface RouteParams {
 
 const ShowTicket: React.FC = () => {
   const route = useRoute();
+  const { user } = useAuth();
   const navigation = useNavigation();
 
   const { ticket } = route.params as RouteParams;
 
   const navigationToEditTicket = useCallback(
     ticketRecieved => {
-      navigation.navigate('EditUserTicket', { ticket: ticketRecieved });
+      user.role === 'admin'
+        ? navigation.navigate('AdminEditTicket', { ticket: ticketRecieved })
+        : navigation.navigate('UserEditTicket', { ticket: ticketRecieved });
     },
-    [navigation],
+    [navigation, user],
   );
 
   const handleDelete = useCallback(async () => {
-    await api.delete(`/tickets/${ticket.id}`);
+    try {
+      await api.delete(`/tickets/${ticket.id}`);
 
-    Alert.alert('Chamado editado com sucesso!');
-    mutateGlobal('tickets');
+      Alert.alert('Chamado deletado com sucesso!');
+      mutateGlobal('tickets/me');
 
-    navigation.navigate('Dashboard');
+      navigation.navigate('Dashboard');
+    } catch (err) {
+      Alert.alert(
+        'Erro ao deletar',
+        'Ocorreu um erro ao deletar o chamado, tente novamente.',
+      );
+    }
   }, [navigation, ticket]);
 
   const handleDeleteTicket = useCallback(() => {
@@ -171,10 +182,10 @@ const ShowTicket: React.FC = () => {
                     <TicketMetaText type="success">Atendido</TicketMetaText>
                   </TicketMeta>
                 ) : null}
-                {ticket.status === 'Em andamento' ? (
+                {ticket.status === 'Em atendimento' ? (
                   <TicketMeta>
                     <Icon name="chevrons-right" size={14} color="#dec81b" />
-                    <TicketMetaText type="alert">Em andamento</TicketMetaText>
+                    <TicketMetaText type="alert">Em atendimento</TicketMetaText>
                   </TicketMeta>
                 ) : null}
                 {ticket.status === 'Não atendido' ? (
@@ -217,7 +228,7 @@ const ShowTicket: React.FC = () => {
                   <TicketMetaText type="default">
                     Última atualização:{' '}
                     {format(
-                      parseISO(ticket.updated_at),
+                      subHours(parseISO(ticket.updated_at), 3),
                       "dd/MM/yyyy 'às' HH:mm'h'",
                     )}
                   </TicketMetaText>

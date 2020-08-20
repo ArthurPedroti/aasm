@@ -2,7 +2,7 @@ import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { TextInput, Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import { mutate as mutateGlobal } from 'swr';
@@ -40,6 +40,20 @@ import {
   ItemContent,
 } from './styles';
 
+interface RouteParams {
+  ticket: {
+    id: string;
+    client_id: string;
+    client_name: string;
+    client_cnpj: string;
+    classification: string;
+    status: string;
+    equipment: string;
+    type: string;
+    description: string;
+  };
+}
+
 interface CreateTicketFormData {
   client: string;
   equipment: string;
@@ -70,28 +84,49 @@ export interface Client {
   telefone: string;
 }
 
-const types = [
-  {
-    name: 'Máquina não parada',
-  },
-  {
-    name: 'Máquina parada',
-  },
-  {
-    name: 'Pendência jurídica',
-  },
+const typeOptions = [
+  'Máquina não parada',
+  'Máquina parada',
+  'Pendência jurídica',
 ];
+const classificationOptions = [
+  'Garantia',
+  'Manutenção preventiva',
+  'Manutenção corretiva',
+];
+const statusOptions = ['Não atendido', 'Em atendimento', 'Atendido'];
 
-const CreateUserTicket: React.FC = () => {
-  // const { data: clients } = useFetchUrl<Client[]>(
-  //   'https://jsonplaceholder.typicode.com/todos/1',
-  // );
+const AdminEditTicket: React.FC = () => {
+  const route = useRoute();
+  const { ticket } = route.params as RouteParams;
+
   const modalizeRef = useRef<Modalize>(null);
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedType, setSelectedType] = useState(ticket.type);
+  const [selectedClassification, setSelectedClassification] = useState(
+    ticket.classification,
+  );
+  const [selectedStatus, setSelectedStatus] = useState(ticket.status);
   const { data: clients } = useProtheusFetch<Client[]>('clients');
-  const [selectedClient, setSelectedClient] = useState<Client>({} as Client);
+
+  const [selectedClient, setSelectedClient] = useState<Client>({
+    codigo_cliente: ticket.client_id,
+    razao_social: ticket.client_name,
+    cnpj: ticket.client_cnpj,
+    inscricao_estadual: '',
+    endereco: '',
+    bairro: '',
+    municipio: '',
+    uf: '',
+    cep: '',
+    contato: '',
+    email: '',
+    telefone: '',
+  });
+
   const [clientError, setClientError] = useState(false);
   const [typeError, setTypeError] = useState('');
+  const [classificationError, setClassificationError] = useState('');
+  const [statusError, setStatusError] = useState('');
 
   // search
   const [clientsFiltered, setClientsFiltered] = useState<Client[]>([]);
@@ -144,6 +179,20 @@ const CreateUserTicket: React.FC = () => {
     [setSelectedType],
   );
 
+  const handleClassificationChanged = useCallback(
+    (classification: string) => {
+      setSelectedClassification(classification);
+    },
+    [setSelectedClassification],
+  );
+
+  const handleStatusChanged = useCallback(
+    (status: string) => {
+      setSelectedStatus(status);
+    },
+    [setSelectedStatus],
+  );
+
   const handleCreateTicket = useCallback(
     async (data: CreateTicketFormData) => {
       try {
@@ -155,6 +204,7 @@ const CreateUserTicket: React.FC = () => {
           equipment: Yup.string().required('Equipamento obrigatório'),
           description: Yup.string().required('Descrição obrigatória'),
         });
+
         if (selectedClient.codigo_cliente === undefined) {
           setClientError(true);
           await schema.validate(data, {
@@ -164,6 +214,16 @@ const CreateUserTicket: React.FC = () => {
         }
         if (selectedType === '') {
           setTypeError('Selecione o tipo!');
+          return;
+        }
+
+        if (selectedClassification === 'Sem classificação') {
+          setClassificationError('Selecione a classificação!');
+          return;
+        }
+
+        if (selectedStatus === '') {
+          setStatusError('Selecione o status!');
           return;
         }
 
@@ -177,14 +237,19 @@ const CreateUserTicket: React.FC = () => {
           client_name: selectedClient.razao_social,
           client_cnpj: selectedClient.cnpj,
           type: selectedType,
+          classification: selectedClassification,
+          status: selectedStatus,
         };
 
-        const updatedTicket = await api.post(`/tickets`, completeData);
+        const updatedTicket = await api.put(
+          `/tickets/${ticket.id}`,
+          completeData,
+        );
 
-        Alert.alert('Chamado criado com sucesso!');
+        Alert.alert('Chamado editado com sucesso!');
         mutateGlobal('tickets/me', { updatedTicket });
 
-        navigation.goBack();
+        navigation.navigate('ShowTicket', { ticket: updatedTicket.data });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -194,11 +259,18 @@ const CreateUserTicket: React.FC = () => {
 
         Alert.alert(
           'Erro no cadastro',
-          'Ocorreu um erro ao criar o chamado, tente novamente.',
+          'Ocorreu um erro ao editar o chamado, tente novamente.',
         );
       }
     },
-    [navigation, selectedClient, selectedType],
+    [
+      navigation,
+      selectedClassification,
+      selectedClient,
+      selectedStatus,
+      selectedType,
+      ticket,
+    ],
   );
 
   const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
@@ -218,7 +290,7 @@ const CreateUserTicket: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Novo chamado</HeaderTitle>
+        <HeaderTitle>Editar chamado</HeaderTitle>
       </Header>
       <Modalize
         ref={modalizeRef}
@@ -247,7 +319,7 @@ const CreateUserTicket: React.FC = () => {
         keyboardAvoidingBehavior="height"
       />
       <Container>
-        <Form ref={formRef} onSubmit={handleCreateTicket}>
+        <Form initialData={ticket} ref={formRef} onSubmit={handleCreateTicket}>
           <Select
             autoCapitalize="words"
             error={clientError}
@@ -278,14 +350,60 @@ const CreateUserTicket: React.FC = () => {
             </SectionMetaTitle>
             <Section>
               <SectionContent>
-                {types.map(option => (
+                {typeOptions.map(option => (
                   <TypeOption
-                    selected={selectedType === option.name}
-                    key={option.name}
-                    onPress={() => handleTypeChanged(option.name)}
+                    selected={selectedType === option}
+                    key={option}
+                    onPress={() => handleTypeChanged(option)}
                   >
-                    <TypeText selected={selectedType === option.name}>
-                      {option.name}
+                    <TypeText selected={selectedType === option}>
+                      {option}
+                    </TypeText>
+                  </TypeOption>
+                ))}
+              </SectionContent>
+            </Section>
+          </Type>
+          <Type>
+            <SectionMetaTitle
+              style={{ flexDirection: 'column', alignItems: 'flex-start' }}
+            >
+              <Title>Escolha a classificação</Title>
+              {classificationError ? (
+                <SectionError>{classificationError}</SectionError>
+              ) : null}
+            </SectionMetaTitle>
+            <Section>
+              <SectionContent>
+                {classificationOptions.map(option => (
+                  <TypeOption
+                    selected={selectedClassification === option}
+                    key={option}
+                    onPress={() => handleClassificationChanged(option)}
+                  >
+                    <TypeText selected={selectedClassification === option}>
+                      {option}
+                    </TypeText>
+                  </TypeOption>
+                ))}
+              </SectionContent>
+            </Section>
+          </Type>
+          <Type>
+            <SectionMetaTitle>
+              <Title>Escolha a status</Title>
+              <SectionError>{statusError}</SectionError>
+            </SectionMetaTitle>
+            <Section>
+              <SectionContent>
+                {statusOptions.map(option => (
+                  <TypeOption
+                    selected={selectedStatus === option}
+                    key={option}
+                    onPress={() => handleStatusChanged(option)}
+                  >
+                    <TypeText selected={selectedStatus === option}>
+                      {option}
                     </TypeText>
                   </TypeOption>
                 ))}
@@ -307,15 +425,16 @@ const CreateUserTicket: React.FC = () => {
           />
 
           <Button
+            containerStyle={{ marginBottom: 30 }}
             onPress={() => {
               formRef.current?.submitForm();
             }}
           >
-            Cadastrar
+            Salvar
           </Button>
         </Form>
       </Container>
     </>
   );
 };
-export default CreateUserTicket;
+export default AdminEditTicket;

@@ -6,7 +6,6 @@ import { differenceInDays, parseISO, format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
 import { subHours } from 'date-fns/esm';
-import { useInfinityFetch } from '../../hooks/useInfinityFetch';
 import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
 
@@ -27,7 +26,6 @@ import {
   TicketType,
   TicketTypeText,
 } from './styles';
-import api from '../../services/api';
 
 export interface Ticket {
   id: string;
@@ -52,21 +50,6 @@ const AdminDashboard: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
   const clientsPerPage = 3;
 
-  // const tickets = data ? [].concat(...data) : [];
-  // const isLoadingInitialData = !data && !error;
-  // const isLoadingMore =
-  //   isLoadingInitialData ||
-  //   (size > 0 && data && typeof data[size - 1] === 'undefined');
-  // const isEmpty = data?.[0]?.length === 0;
-  // const isReachingEnd = isEmpty || (data && data[data.length - 1]?.length < 1);
-  // const isRefreshing = isValidating && data && data.length === size;
-
-  // const loadTickets = useCallback(() => {
-  //   if (!isReachingEnd && !isLoadingMore) {
-  //     setSize(size + 1);
-  //   }
-  // }, [isReachingEnd, isLoadingMore, setSize, size]);
-
   useEffect(() => {
     if (data !== undefined) {
       if (Array.isArray(data) === false) {
@@ -80,10 +63,6 @@ const AdminDashboard: React.FC = () => {
   }, [data]);
 
   const loadTickets = useCallback(async () => {
-    // if (data) {
-    //   setTickets(data);
-    // }
-    console.log('laoding');
     if (!data) {
       return;
     }
@@ -91,9 +70,7 @@ const AdminDashboard: React.FC = () => {
     if (loading) {
       return;
     }
-    console.log('page', page);
-    console.log('total', total);
-    console.log('tickets.length', tickets.length);
+
     if (total > 0 && tickets.length === total) {
       return;
     }
@@ -201,10 +178,10 @@ const AdminDashboard: React.FC = () => {
                   <TicketMetaText type="success">Atendido</TicketMetaText>
                 </TicketMeta>
               ) : null}
-              {ticket.status === 'Em andamento' ? (
+              {ticket.status === 'Em atendimento' ? (
                 <TicketMeta>
                   <Icon name="chevrons-right" size={14} color="#dec81b" />
-                  <TicketMetaText type="alert">Em andamento</TicketMetaText>
+                  <TicketMetaText type="alert">Em atendimento</TicketMetaText>
                 </TicketMeta>
               ) : null}
               {ticket.status === 'Não atendido' ? (

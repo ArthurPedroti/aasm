@@ -2,7 +2,7 @@ import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { TextInput, Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import { mutate as mutateGlobal } from 'swr';
@@ -39,18 +39,6 @@ import {
   FooterText,
   ItemContent,
 } from './styles';
-
-interface RouteParams {
-  ticket: {
-    id: string;
-    client_id: string;
-    client_name: string;
-    client_cnpj: string;
-    equipment: string;
-    type: string;
-    description: string;
-  };
-}
 
 interface CreateTicketFormData {
   client: string;
@@ -94,27 +82,11 @@ const types = [
   },
 ];
 
-const EditUserTicket: React.FC = () => {
-  const route = useRoute();
-  const { ticket } = route.params as RouteParams;
-
+const CreateTicket: React.FC = () => {
   const modalizeRef = useRef<Modalize>(null);
-  const [selectedType, setSelectedType] = useState(ticket.type);
+  const [selectedType, setSelectedType] = useState('');
   const { data: clients } = useProtheusFetch<Client[]>('clients');
-  const [selectedClient, setSelectedClient] = useState<Client>({
-    codigo_cliente: ticket.client_id,
-    razao_social: ticket.client_name,
-    cnpj: ticket.client_cnpj,
-    inscricao_estadual: '',
-    endereco: '',
-    bairro: '',
-    municipio: '',
-    uf: '',
-    cep: '',
-    contato: '',
-    email: '',
-    telefone: '',
-  });
+  const [selectedClient, setSelectedClient] = useState<Client>({} as Client);
   const [clientError, setClientError] = useState(false);
   const [typeError, setTypeError] = useState('');
 
@@ -204,15 +176,12 @@ const EditUserTicket: React.FC = () => {
           type: selectedType,
         };
 
-        const updatedTicket = await api.put(
-          `/tickets/${ticket.id}/me`,
-          completeData,
-        );
+        const updatedTicket = await api.post(`/tickets`, completeData);
 
-        Alert.alert('Chamado editado com sucesso!');
-        mutateGlobal('tickets', { updatedTicket });
+        Alert.alert('Chamado criado com sucesso!');
+        mutateGlobal('tickets/me', { updatedTicket });
 
-        navigation.navigate('ShowTicket', { ticket: updatedTicket.data });
+        navigation.goBack();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -222,11 +191,11 @@ const EditUserTicket: React.FC = () => {
 
         Alert.alert(
           'Erro no cadastro',
-          'Ocorreu um erro ao editar o chamado, tente novamente.',
+          'Ocorreu um erro ao criar o chamado, tente novamente.',
         );
       }
     },
-    [navigation, selectedClient, selectedType, ticket],
+    [navigation, selectedClient, selectedType],
   );
 
   const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
@@ -246,7 +215,7 @@ const EditUserTicket: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Editar chamado</HeaderTitle>
+        <HeaderTitle>Novo chamado</HeaderTitle>
       </Header>
       <Modalize
         ref={modalizeRef}
@@ -275,7 +244,7 @@ const EditUserTicket: React.FC = () => {
         keyboardAvoidingBehavior="height"
       />
       <Container>
-        <Form initialData={ticket} ref={formRef} onSubmit={handleCreateTicket}>
+        <Form ref={formRef} onSubmit={handleCreateTicket}>
           <Select
             autoCapitalize="words"
             error={clientError}
@@ -339,11 +308,11 @@ const EditUserTicket: React.FC = () => {
               formRef.current?.submitForm();
             }}
           >
-            Salvar
+            Cadastrar
           </Button>
         </Form>
       </Container>
     </>
   );
 };
-export default EditUserTicket;
+export default CreateTicket;

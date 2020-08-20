@@ -2,7 +2,8 @@ import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 
 import AuthRoutes from './auth.routes';
-import AppRoutes from './app.routes';
+import UserRoutes from './user.routes';
+import AdminRoutes from './admin.routes';
 
 import { useAuth } from '../hooks/auth';
 
@@ -16,8 +17,11 @@ const Routes: React.FC = () => {
       </View>
     );
   }
+  if (user) {
+    return user.role === 'admin' ? <AdminRoutes /> : <UserRoutes />;
+  }
 
-  return user ? <AppRoutes /> : <AuthRoutes />;
+  return <AuthRoutes />;
 };
 
 export default Routes;

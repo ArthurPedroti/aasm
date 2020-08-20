@@ -1,15 +1,14 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Dashboard from '../pages/Dashboard';
 import AdminDashboard from '../pages/AdminDashboard';
-import CreateUserTicket from '../pages/CreateUserTicket';
-import EditUserTicket from '../pages/EditUserTicket';
+import CreateTicket from '../pages/CreateTicket';
+import AdminEditTicket from '../pages/AdminEditTicket';
 import ShowTicket from '../pages/ShowTicket';
 
 const App = createStackNavigator();
 
-const AppRoutes: React.FC = () => (
+const AdminRoutes: React.FC = () => (
   <App.Navigator
     screenOptions={{
       headerShown: false,
@@ -17,11 +16,10 @@ const AppRoutes: React.FC = () => (
     }}
   >
     <App.Screen name="AdminDashboard" component={AdminDashboard} />
-    <App.Screen name="Dashboard" component={Dashboard} />
-    <App.Screen name="CreateUserTicket" component={CreateUserTicket} />
-    <App.Screen name="EditUserTicket" component={EditUserTicket} />
+    <App.Screen name="CreateTicket" component={CreateTicket} />
+    <App.Screen name="AdminEditTicket" component={AdminEditTicket} />
     <App.Screen name="ShowTicket" component={ShowTicket} />
   </App.Navigator>
 );
 
-export default AppRoutes;
+export default AdminRoutes;
