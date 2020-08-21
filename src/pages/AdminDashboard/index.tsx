@@ -106,14 +106,14 @@ const AdminDashboard: React.FC = () => {
   );
 
   const navigationToCreateTicket = useCallback(() => {
-    navigate('CreateUserTicket');
+    navigate('CreateTicket');
   }, [navigate]);
 
   return (
     <Container>
       <Header>
         <HeaderTitle onPress={() => signOut()}>
-          Bem vindo, Admin {'\n'}
+          Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
         <CreateTicketButton onPress={navigationToCreateTicket}>
