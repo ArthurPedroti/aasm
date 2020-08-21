@@ -106,7 +106,7 @@ const AdminDashboard: React.FC = () => {
   );
 
   const navigationToCreateTicket = useCallback(() => {
-    navigate('CreateUserTicket');
+    navigate('CreateTicket');
   }, [navigate]);
 
   return (
