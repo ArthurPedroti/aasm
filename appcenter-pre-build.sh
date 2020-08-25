@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-
-cd $APPCENTER_SOURCE_DIRECTORY
-echo “API_URL=$APPCENTER_BRANCH” > .env
-echo “API_PROTHEUS_URL=$PI_PROTHEUS_URL” >> .env
+# Creates an .env from ENV variables for use with react-native-config
+ENV_WHITELIST=${ENV_WHITELIST:-"^RN_"}
+printf "Creating an .env file with the following whitelist:\n"
+printf "%s\n" $ENV_WHITELIST
+set | egrep -e $ENV_WHITELIST | sed 's/^RN_//g' > .env
+printf "\n.env created with contents:\n\n"
+cat .env
