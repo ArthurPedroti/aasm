@@ -1,4 +1,5 @@
-#!/bin/bash
-cd ${APPCENTER_SOURCE_DIRECTORY}
-echo “API_URL=${API_URL}” > .env
-echo “FAPI_PROTHEUS_URL=${FAPI_PROTHEUS_URL}” >> .env
+#!/usr/bin/env bash
+
+cd $APPCENTER_SOURCE_DIRECTORY
+echo “API_URL=$APPCENTER_BRANCH” > .env
+echo “API_PROTHEUS_URL=$PI_PROTHEUS_URL” >> .env
