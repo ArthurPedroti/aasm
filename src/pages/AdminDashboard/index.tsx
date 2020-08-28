@@ -5,7 +5,6 @@ import { differenceInDays, parseISO, format } from 'date-fns';
 
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
-import { subHours } from 'date-fns/esm';
 import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
 
@@ -216,7 +215,7 @@ const AdminDashboard: React.FC = () => {
                 <Icon name="activity" size={14} color="#999591" />
                 <TicketMetaText type="default">
                   {format(
-                    subHours(parseISO(ticket.updated_at), 3),
+                    parseISO(ticket.updated_at),
                     "dd/MM/yyyy 'às' HH:mm'h'",
                   )}
                 </TicketMetaText>

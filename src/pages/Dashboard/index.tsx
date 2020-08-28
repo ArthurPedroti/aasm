@@ -5,7 +5,6 @@ import { differenceInDays, parseISO, format } from 'date-fns';
 
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
-import { subHours } from 'date-fns/esm';
 import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
 
@@ -42,7 +41,7 @@ export interface Ticket {
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
-  const { data } = useFetch<Ticket[]>('tickets');
+  const { data } = useFetch<Ticket[]>('tickets/me');
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
@@ -106,14 +105,14 @@ const Dashboard: React.FC = () => {
   );
 
   const navigationToCreateTicket = useCallback(() => {
-    navigate('CreateUserTicket');
+    navigate('CreateTicket');
   }, [navigate]);
 
   return (
     <Container>
       <Header>
         <HeaderTitle onPress={() => signOut()}>
-          Bem vindo, Admin {'\n'}
+          Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
         <CreateTicketButton onPress={navigationToCreateTicket}>
@@ -216,7 +215,7 @@ const Dashboard: React.FC = () => {
                 <Icon name="activity" size={14} color="#999591" />
                 <TicketMetaText type="default">
                   {format(
-                    subHours(parseISO(ticket.updated_at), 3),
+                    parseISO(ticket.updated_at),
                     "dd/MM/yyyy 'às' HH:mm'h'",
                   )}
                 </TicketMetaText>

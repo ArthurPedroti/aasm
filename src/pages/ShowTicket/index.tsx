@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { differenceInDays, parseISO, format, subHours } from 'date-fns';
+import { differenceInDays, parseISO, format } from 'date-fns';
 import { mutate as mutateGlobal } from 'swr';
 
 import api from '../../services/api';
@@ -32,6 +32,9 @@ import {
 interface RouteParams {
   ticket: {
     id: string;
+    user: {
+      name: string;
+    };
     client_name: string;
     classification: string;
     equipment: string;
@@ -228,9 +231,15 @@ const ShowTicket: React.FC = () => {
                   <TicketMetaText type="default">
                     Última atualização:{' '}
                     {format(
-                      subHours(parseISO(ticket.updated_at), 3),
+                      parseISO(ticket.updated_at),
                       "dd/MM/yyyy 'às' HH:mm'h'",
                     )}
+                  </TicketMetaText>
+                </TicketMeta>
+                <TicketMeta>
+                  <Icon name="user" size={14} color="#999591" />
+                  <TicketMetaText type="default">
+                    {ticket.user.name}
                   </TicketMetaText>
                 </TicketMeta>
               </TicketInfo>
