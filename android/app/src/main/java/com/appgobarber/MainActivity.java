@@ -1,4 +1,4 @@
-package com.aasm;
+package com.appgobarberatp;
 
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen; // Adicione esse import
@@ -14,6 +14,6 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected String getMainComponentName() {
-    return "aasm";
+    return "appgobarber";
   }
 }
