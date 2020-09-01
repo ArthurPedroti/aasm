@@ -130,11 +130,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.aasm"
+        applicationId "com.aasmatp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "0.0.1"
+        versionCode 1
+        versionName "1.0.2"
     }
     splits {
         abi {
@@ -242,7 +242,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 project.ext.vectoricons = [
-  iconFontNames: ['Feather.ttf', 'Entypo.ttf']
+  iconFontNames: ['Feather.ttf']
 ]
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
