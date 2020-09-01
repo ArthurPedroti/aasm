@@ -130,7 +130,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.aasmatp"
+        applicationId "com.aasm"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
