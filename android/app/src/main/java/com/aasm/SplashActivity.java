@@ -1,4 +1,4 @@
-package com.aasm; // Altere para o seu pacote
+package com.aasm;
 
 import android.content.Intent;
 import android.os.Bundle;
