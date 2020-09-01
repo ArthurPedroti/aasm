@@ -9,7 +9,7 @@ import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
 import { Modalize } from 'react-native-modalize';
-import { useProtheusFetch } from '../../hooks/useProtheusFetch';
+import { useFetch } from '../../hooks/useFetch';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -85,7 +85,7 @@ const types = [
 const CreateTicket: React.FC = () => {
   const modalizeRef = useRef<Modalize>(null);
   const [selectedType, setSelectedType] = useState('');
-  const { data: clients } = useProtheusFetch<Client[]>('clients');
+  const { data: clients } = useFetch<Client[]>('tickets/clients');
   const [selectedClient, setSelectedClient] = useState<Client>({} as Client);
   const [clientError, setClientError] = useState(false);
   const [typeError, setTypeError] = useState('');
