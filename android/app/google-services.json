@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1096075985036",
+    "firebase_url": "https://aasm-e6d1e.firebaseio.com",
+    "project_id": "aasm-e6d1e",
+    "storage_bucket": "aasm-e6d1e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096075985036:android:2f4f430304119317fd7ba9",
+        "android_client_info": {
+          "package_name": "com.aasm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096075985036-juglhict25v1b3apflaso4m93murlb6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi9SvLsUyECZ62H4xxXLhoFWiYso_TnQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096075985036-juglhict25v1b3apflaso4m93murlb6u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
