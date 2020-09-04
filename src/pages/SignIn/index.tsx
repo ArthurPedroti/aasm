@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -6,9 +6,10 @@ import {
   Platform,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+// import Icon from 'react-native-vector-icons/Feather';
+// import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 
 import { Form } from '@unform/mobile';
@@ -27,10 +28,10 @@ import {
   Container,
   ImageLogo,
   Title,
-  ForgotPassword,
-  ForgotPasswordText,
-  CreateAccountButton,
-  CreateAccountButtonText,
+  // ForgotPassword,
+  // ForgotPasswordText,
+  // CreateAccountButton,
+  // CreateAccountButtonText,
 } from './styles';
 
 interface SignInFormData {
@@ -39,10 +40,11 @@ interface SignInFormData {
 }
 
 const SignIn: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   const { signIn } = useAuth();
 
@@ -61,6 +63,8 @@ const SignIn: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
+
+        setLoading(true);
 
         await signIn({
           email: data.email,
@@ -131,18 +135,25 @@ const SignIn: React.FC = () => {
               >
                 Entrar
               </Button>
+              {loading && (
+                <ActivityIndicator
+                  style={{ marginTop: 24 }}
+                  size="large"
+                  color="#dec81b"
+                />
+              )}
             </Form>
-            <ForgotPassword onPress={() => {}}>
+            {/* <ForgotPassword onPress={() => {}}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
-            </ForgotPassword>
+            </ForgotPassword> */}
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
+      {/* <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
         <Icon name="log-in" size={20} color="#dec81b" />
         <CreateAccountButtonText>Crie uma conta</CreateAccountButtonText>
-      </CreateAccountButton>
+      </CreateAccountButton> */}
     </>
   );
 };

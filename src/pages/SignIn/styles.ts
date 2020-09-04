@@ -11,8 +11,8 @@ export const Container = styled.View`
 `;
 
 export const ImageLogo = styled.Image`
-  width: 300px;
-  height: 150px;
+  width: 250px;
+  height: 125px;
 `;
 
 export const Title = styled.Text`

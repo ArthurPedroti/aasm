@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+import { mutate } from 'swr';
 import api from '../services/api';
 
 interface User {
@@ -42,14 +43,50 @@ const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadStorageData(): Promise<void> {
-      const [token, user] = await AsyncStorage.multiGet([
-        '@GoBarber:token',
-        '@GoBarber:user',
+      const [
+        token,
+        user,
+        tickets,
+        ticketsMe,
+        ticketsClients,
+      ] = await AsyncStorage.multiGet([
+        '@MeSalva:token',
+        '@MeSalva:user',
+        '@MeSalva:tickets',
+        '@MeSalva:tickets/me',
+        '@MeSalva:tickets/clients',
       ]);
 
       if (token[1] && user[1]) {
         setData({ token: token[1], user: JSON.parse(user[1]) });
         api.defaults.headers.authorization = `Bearer ${token[1]}`;
+
+        if (tickets[1]) {
+          await mutate('tickets', JSON.parse(tickets[1]));
+        } else {
+          await mutate(
+            'tickets',
+            api.get('tickets').then(res => res.data),
+          );
+        }
+
+        if (ticketsMe[1]) {
+          await mutate('tickets/me', JSON.parse(ticketsMe[1]));
+        } else {
+          await mutate(
+            'tickets/me',
+            api.get('tickets/me').then(res => res.data),
+          );
+        }
+
+        if (ticketsClients[1]) {
+          await mutate('tickets/clients', JSON.parse(ticketsClients[1]));
+        } else {
+          await mutate(
+            'tickets/clients',
+            api.get('tickets/clients').then(res => res.data),
+          );
+        }
       }
 
       setLoading(false);
@@ -67,24 +104,39 @@ const AuthProvider: React.FC = ({ children }) => {
     const { token, user } = response.data;
 
     await AsyncStorage.multiSet([
-      ['@GoBarber:token', token],
-      ['@GoBarber:user', JSON.stringify(user)],
+      ['@MeSalva:token', token],
+      ['@MeSalva:user', JSON.stringify(user)],
     ]);
 
     api.defaults.headers.authorization = `Bearer ${token}`;
+
+    await mutate(
+      'tickets',
+      api.get('tickets').then(res => res.data),
+    );
+
+    await mutate(
+      'tickets/me',
+      api.get('tickets/me').then(res => res.data),
+    );
+
+    await mutate(
+      'tickets/clients',
+      api.get('tickets/clients').then(res => res.data),
+    );
 
     setData({ token, user });
   }, []);
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.multiRemove(['@GoBarber:token', '@GoBarber:user']);
+    await AsyncStorage.multiRemove(['@MeSalva:token', '@MeSalva:user']);
 
     setData({} as AuthState);
   }, []);
 
   const updateUser = useCallback(
     async (user: User) => {
-      await AsyncStorage.setItem('@GoBarber:user', JSON.stringify(user));
+      await AsyncStorage.setItem('@MeSalva:user', JSON.stringify(user));
 
       setData({
         token: data.token,

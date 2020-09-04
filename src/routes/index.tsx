@@ -18,6 +18,7 @@ const Routes: React.FC = () => {
       </View>
     );
   }
+
   if (user) {
     // Setting External User Id with Callback Available in SDK Version 3.7.0+
     if (user.role === 'admin') {
