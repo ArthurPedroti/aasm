@@ -9,7 +9,7 @@ import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
 import { Modalize } from 'react-native-modalize';
-import { useProtheusFetch } from '../../hooks/useProtheusFetch';
+import { useFetch } from '../../hooks/useFetch';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -106,7 +106,7 @@ const AdminEditTicket: React.FC = () => {
     ticket.classification,
   );
   const [selectedStatus, setSelectedStatus] = useState(ticket.status);
-  const { data: clients } = useProtheusFetch<Client[]>('clients');
+  const { data: clients } = useFetch<Client[]>('tickets/clients');
 
   const [selectedClient, setSelectedClient] = useState<Client>({
     codigo_cliente: ticket.client_id,
