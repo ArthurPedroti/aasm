@@ -22,8 +22,12 @@ const Routes: React.FC = () => {
     // Setting External User Id with Callback Available in SDK Version 3.7.0+
     if (user.role === 'admin') {
       OneSignal.sendTag('role', 'admin');
+      OneSignal.sendTag('user_id', user.id);
+      OneSignal.sendTag('user_name', user.name);
     } else {
       OneSignal.sendTag('role', 'user');
+      OneSignal.sendTag('user_id', user.id);
+      OneSignal.sendTag('user_name', user.name);
     }
     OneSignal.setExternalUserId(user.id, results => {
       // The results will contain push and email success statuses
