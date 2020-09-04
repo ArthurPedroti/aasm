@@ -69,6 +69,7 @@ declare module 'react-native-onesignal' {
   }
 
   export interface OneSignal {
+    setExternalUserId(id: string, arg1: (results: any) => void);
     /**
      * Initialize Onesignal
      */
