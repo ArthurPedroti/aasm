@@ -119,6 +119,10 @@ export const TicketMeta = styled.View`
   align-items: center;
   margin-top: 8px;
   flex-direction: row;
+
+  &:first-child {
+    margin-bottom: 20px;
+  }
 `;
 
 export const TicketMetaText = styled.Text<ContainerProps>`
