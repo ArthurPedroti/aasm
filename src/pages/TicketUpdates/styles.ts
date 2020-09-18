@@ -84,7 +84,7 @@ export const TicketTypeTitle = styled.Text`
 
 export const TicketTypeText = styled.Text`
   margin-top: 4px;
-  color: #f4ede8;
+  color: #ff00ff;
 `;
 
 export const IconText = styled.Text`
