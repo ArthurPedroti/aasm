@@ -6,6 +6,7 @@ import CreateTicket from '../pages/CreateTicket';
 import AdminEditTicket from '../pages/AdminEditTicket';
 import ShowTicket from '../pages/ShowTicket';
 import TicketUpdates from '../pages/TicketUpdates';
+import ShowTicketUpdate from '../pages/ShowTicketUpdate';
 
 const App = createStackNavigator();
 
@@ -21,6 +22,7 @@ const AdminRoutes: React.FC = () => (
     <App.Screen name="AdminEditTicket" component={AdminEditTicket} />
     <App.Screen name="ShowTicket" component={ShowTicket} />
     <App.Screen name="TicketUpdates" component={TicketUpdates} />
+    <App.Screen name="ShowTicketUpdate" component={ShowTicketUpdate} />
   </App.Navigator>
 );
 

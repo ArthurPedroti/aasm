@@ -1,22 +1,10 @@
-import React, { useCallback, useRef, useState } from 'react';
-import {
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { differenceInDays, parseISO, format } from 'date-fns';
-import { mutate as mutateGlobal } from 'swr';
 import StepIndicator from 'react-native-step-indicator';
-
-import api from '../../services/api';
 import Button from '../../components/Button';
+
 import { useAuth } from '../../hooks/auth';
 
 import {
@@ -24,16 +12,13 @@ import {
   Header,
   HeaderTitle,
   BackButton,
-  TicketContainer,
-  TicketInfo,
-  TicketTypeTitle,
-  TicketMeta,
-  TicketMetaText,
-  TicketType,
-  TicketTypeText,
-  TicketTypeMeta,
+  TicketUpdateMeta,
+  TicketUpdateText,
+  TicketActions,
+  ActionButton,
+  TextButton,
 } from './styles';
-import { useFetch } from '../../hooks/useFetch';
+import { TicketUpdate } from '../ShowTicket';
 
 interface RouteParams {
   ticket_updates: {
@@ -67,6 +52,7 @@ const stepIndicatorStyles = {
   stepIndicatorLabelUnFinishedColor: 'transparent',
   labelColor: '#999999',
   labelSize: 16,
+  labelAlign: 'flex-start',
   currentStepLabelColor: '#dec81b',
 };
 
@@ -84,11 +70,52 @@ const TicketUpdates: React.FC = () => {
   const { user } = useAuth();
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState<number>(2);
-  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 40 }).current;
 
   if (ticket_updates.length === 0) {
-    return <TicketTypeText>Não há atualizções</TicketTypeText>;
+    return <TicketUpdateText>Não há atualizções</TicketUpdateText>;
   }
+
+  const navigationToShowTicket = useCallback(
+    (ticket_update: TicketUpdate) => {
+      navigation.navigate('ShowTicketUpdate', { ticket_update });
+    },
+    [navigation],
+  );
+
+  const renderLabel = ({
+    label,
+    position,
+  }: {
+    position: number;
+    stepStatus: string;
+    label: string;
+    currentPosition: number;
+  }): React.ReactNode => {
+    return (
+      <TicketUpdateMeta>
+        <TicketUpdateText>
+          {label}
+          {ticket_updates[position].description}
+          {ticket_updates[position].id}
+        </TicketUpdateText>
+        <TicketActions>
+          {position + 1 === ticket_updates.length ? (
+            <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
+              <TextButton>Deletar</TextButton>
+            </ActionButton>
+          ) : null}
+          <ActionButton>
+            <TextButton>Editar</TextButton>
+          </ActionButton>
+          <ActionButton
+            onPress={() => navigationToShowTicket(ticket_updates[position])}
+          >
+            <TextButton>Ver</TextButton>
+          </ActionButton>
+        </TicketActions>
+      </TicketUpdateMeta>
+    );
+  };
 
   return (
     <>
@@ -110,10 +137,10 @@ const TicketUpdates: React.FC = () => {
             stepCount={ticket_updates.length}
             direction="vertical"
             currentPosition={currentPage}
-            labels={ticket_updates.map(item => (
-              <TicketTypeText>{item.description}</TicketTypeText>
-            ))}
+            labels={ticket_updates.map(item => item.title)}
+            renderLabel={renderLabel}
           />
+          <Button>Nova Atualização</Button>
         </Container>
       </KeyboardAvoidingView>
     </>
