@@ -25,7 +25,7 @@ const containerVariations = {
   `,
 };
 
-export const Container = styled.View`
+export const Container = styled.ScrollView`
   flex: 1;
   align-items: center;
   justify-content: center;

@@ -270,21 +270,19 @@ const ShowTicket: React.FC = () => {
             <TicketContainer>
               <TicketType>
                 <TicketTypeMeta>
-                  <TicketTypeTitle>ATUALIZAÇÕES</TicketTypeTitle>
+                  <TicketTypeTitle>ÚLTIMA ATUALIZAÇÃO</TicketTypeTitle>
                 </TicketTypeMeta>
               </TicketType>
 
               <TicketInfo>
-                {ticket_updates
-                  ? ticket_updates.map((ticket_update: TicketUpdate) => (
-                      <TicketMeta>
-                        <Icon name="circle" size={14} color="#999591" />
-                        <TicketMetaText type="default">
-                          {ticket_update.description}
-                        </TicketMetaText>
-                      </TicketMeta>
-                    ))
-                  : null}
+                {ticket_updates ? (
+                  <TicketMeta>
+                    <Icon name="circle" size={14} color="#999591" />
+                    <TicketMetaText type="default">
+                      {ticket_updates[ticket_updates.length - 1].title}
+                    </TicketMetaText>
+                  </TicketMeta>
+                ) : null}
               </TicketInfo>
               <Button onPress={() => navigationToTicketUpdates(ticket_updates)}>
                 Ver mais

@@ -51,15 +51,39 @@ export const HeaderTitle = styled.Text`
   margin-left: 16px;
 `;
 
-export const TicketUpdateMeta = styled.View`
-  padding: 8px;
-  background: #3e3b47;
-  border-radius: 10px;
-  margin-left: 8px;
+export const BackToSignIn = styled.TouchableOpacity`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #312e38;
+  border-top-width: 1px;
+  border-color: #232129;
+  padding: 16px 0 ${16 + getBottomSpace()}px;
+
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 `;
 
-export const TicketUpdateText = styled.Text`
-  font-size: 16px;
+export const TicketType = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const TicketTypeMeta = styled.View`
+  flex: 1;
+  margin-left: 20px;
+`;
+
+export const TicketTypeTitle = styled.Text`
+  font-size: 18px;
+  font-weight: 700;
+  color: #f4ede8;
+`;
+
+export const TicketTypeText = styled.Text`
+  margin-top: 4px;
   color: #f4ede8;
 `;
 
@@ -68,18 +92,36 @@ export const IconText = styled.Text`
   text-align: center;
 `;
 
-export const TicketActions = styled.View`
-  flex-direction: row;
+export const TicketsListTitle = styled.Text`
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #f4ede8;
+`;
+
+export const TicketContainer = styled(RectButton)`
+  flex: 1;
+  width: 100%;
+  background: #3e3b47;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+`;
+
+export const TicketInfo = styled.View`
+  flex: 1;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+export const TicketMeta = styled.View`
   align-items: center;
-  justify-content: center;
-  margin-left: auto;
+  margin-top: 8px;
+  flex-direction: row;
 `;
 
-export const ActionButton = styled.TouchableOpacity`
-  background: #f4ede8;
-  padding: 4px 8px;
-  margin: 4px;
-  border-radius: 4px;
+export const TicketMetaText = styled.Text<ContainerProps>`
+  margin-left: 8px;
+  ${props => containerVariations[props.type || 'default']}
 `;
-
-export const TextButton = styled.Text``;

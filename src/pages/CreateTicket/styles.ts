@@ -9,7 +9,7 @@ interface TypeProps {
 
 export const Container = styled.ScrollView`
   flex: 1;
-  padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
+  padding-top: ${Platform.OS === 'android' ? 150 : 40}px;
 `;
 
 export const Header = styled.View`
@@ -46,8 +46,6 @@ export const BackToSignIn = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
-export const Type = styled.View``;
-
 export const Title = styled.Text`
   color: #999591;
   font-size: 18px;
@@ -63,6 +61,7 @@ export const SectionMetaTitle = styled.View`
   align-items: center;
   margin-bottom: 10px;
 `;
+
 export const SectionError = styled.Text`
   color: #c53030;
   font-size: 16px;

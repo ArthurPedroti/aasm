@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import StepIndicator from 'react-native-step-indicator';
 import Button from '../../components/Button';
 
 import { useAuth } from '../../hooks/auth';
@@ -12,11 +11,10 @@ import {
   Header,
   HeaderTitle,
   BackButton,
-  TicketUpdateMeta,
-  TicketUpdateText,
-  TicketActions,
-  ActionButton,
-  TextButton,
+  TicketTypeMeta,
+  TicketTypeTitle,
+  TicketInfo,
+  TicketContainer,
 } from './styles';
 import { TicketUpdate } from '../ShowTicket';
 
@@ -71,51 +69,12 @@ const TicketUpdates: React.FC = () => {
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState<number>(2);
 
-  if (ticket_updates.length === 0) {
-    return <TicketUpdateText>Não há atualizções</TicketUpdateText>;
-  }
-
   const navigationToShowTicket = useCallback(
     (ticket_update: TicketUpdate) => {
       navigation.navigate('ShowTicketUpdate', { ticket_update });
     },
     [navigation],
   );
-
-  const renderLabel = ({
-    label,
-    position,
-  }: {
-    position: number;
-    stepStatus: string;
-    label: string;
-    currentPosition: number;
-  }): React.ReactNode => {
-    return (
-      <TicketUpdateMeta>
-        <TicketUpdateText>
-          {label}
-          {ticket_updates[position].description}
-          {ticket_updates[position].id}
-        </TicketUpdateText>
-        <TicketActions>
-          {position + 1 === ticket_updates.length ? (
-            <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
-              <TextButton>Deletar</TextButton>
-            </ActionButton>
-          ) : null}
-          <ActionButton>
-            <TextButton>Editar</TextButton>
-          </ActionButton>
-          <ActionButton
-            onPress={() => navigationToShowTicket(ticket_updates[position])}
-          >
-            <TextButton>Ver</TextButton>
-          </ActionButton>
-        </TicketActions>
-      </TicketUpdateMeta>
-    );
-  };
 
   return (
     <>
@@ -124,57 +83,35 @@ const TicketUpdates: React.FC = () => {
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
 
-        <HeaderTitle>Chamado</HeaderTitle>
+        <HeaderTitle>Atualizações</HeaderTitle>
       </Header>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        enabled
-      >
-        <Container>
-          <StepIndicator
-            customStyles={stepIndicatorStyles}
-            stepCount={ticket_updates.length}
-            direction="vertical"
-            currentPosition={currentPage}
-            labels={ticket_updates.map(item => item.title)}
-            renderLabel={renderLabel}
-          />
-          <Button>Nova Atualização</Button>
-        </Container>
-      </KeyboardAvoidingView>
+      <Container>
+        {ticket_updates.map(ticket_update => {
+          const index = ticket_updates.indexOf(ticket_update);
+          return (
+            <TicketContainer>
+              {/* <Icon name="alert-circle" size={36} color="#e6fffa" /> */}
+              <TicketTypeMeta key={ticket_update.id}>
+                <TicketTypeTitle>{ticket_update.title}</TicketTypeTitle>
+                <TicketTypeTitle>{ticket_update.description}</TicketTypeTitle>
+                {/* <TicketActions>
+                    {index + 1 === ticket_updates.length ? (
+                      <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
+                      <TextButton>Deletar</TextButton>
+                      </ActionButton>
+                      ) : null}
+                      <ActionButton>
+                      <TextButton>Editar</TextButton>
+                      </ActionButton>
+                    </TicketActions> */}
+              </TicketTypeMeta>
+            </TicketContainer>
+          );
+        })}
+        <Button>Nova Atualização</Button>
+      </Container>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-  },
-  stepIndicator: {
-    marginVertical: 50,
-    paddingHorizontal: 20,
-  },
-  rowItem: {
-    flex: 3,
-    paddingVertical: 20,
-  },
-  title: {
-    flex: 1,
-    fontSize: 20,
-    color: '#333333',
-    paddingVertical: 16,
-    fontWeight: '600',
-  },
-  body: {
-    flex: 1,
-    fontSize: 15,
-    color: '#606060',
-    lineHeight: 24,
-    marginRight: 8,
-  },
-});
 
 export default TicketUpdates;
