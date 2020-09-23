@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Entypo';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Button from '../../components/Button';
 
@@ -11,10 +11,15 @@ import {
   Header,
   HeaderTitle,
   BackButton,
-  TicketTypeMeta,
-  TicketTypeTitle,
-  TicketInfo,
   TicketContainer,
+  TicketUpdateMeta,
+  TicketUpdateTitle,
+  TicketUpdateDescription,
+  TicketActions,
+  ActionButton,
+  ButtonText,
+  TicketWrap,
+  TicketLine,
 } from './styles';
 import { TicketUpdate } from '../ShowTicket';
 
@@ -28,39 +33,6 @@ interface RouteParams {
     created_at: string;
   }[];
 }
-
-const stepIndicatorStyles = {
-  stepIndicatorSize: 18,
-  currentStepIndicatorSize: 24,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#dec81b',
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#dec81b',
-  stepStrokeUnFinishedColor: '#aaaaaa',
-  separatorFinishedColor: '#dec81b',
-  separatorUnFinishedColor: '#aaaaaa',
-  stepIndicatorFinishedColor: '#dec81b',
-  stepIndicatorUnFinishedColor: '#999591',
-  stepIndicatorCurrentColor: '#232129',
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: 'transparent',
-  stepIndicatorLabelFinishedColor: 'transparent',
-  stepIndicatorLabelUnFinishedColor: 'transparent',
-  labelColor: '#999999',
-  labelSize: 16,
-  labelAlign: 'flex-start',
-  currentStepLabelColor: '#dec81b',
-};
-
-const labels = [
-  'Cart',
-  'Delivery Address',
-  'Order Summary',
-  'Payment Method',
-  'Track',
-];
 
 const TicketUpdates: React.FC = () => {
   const route = useRoute();
@@ -76,6 +48,23 @@ const TicketUpdates: React.FC = () => {
     [navigation],
   );
 
+  console.log(ticket_updates);
+
+  const tickets_standart = [
+    {
+      title: 'Aguardando classificação',
+      description: null,
+    },
+    {
+      title: 'Aguardando classificação',
+      description: null,
+    },
+    {
+      title: 'Aguardando classificação',
+      description: null,
+    },
+  ];
+
   return (
     <>
       <Header>
@@ -89,26 +78,33 @@ const TicketUpdates: React.FC = () => {
         {ticket_updates.map(ticket_update => {
           const index = ticket_updates.indexOf(ticket_update);
           return (
-            <TicketContainer>
-              {/* <Icon name="alert-circle" size={36} color="#e6fffa" /> */}
-              <TicketTypeMeta key={ticket_update.id}>
-                <TicketTypeTitle>{ticket_update.title}</TicketTypeTitle>
-                <TicketTypeTitle>{ticket_update.description}</TicketTypeTitle>
-                {/* <TicketActions>
-                    {index + 1 === ticket_updates.length ? (
+            <TicketWrap>
+              <TicketLine />
+              <TicketContainer>
+                <Icon name="controller-record" size={16} color="#dec81b" />
+                <TicketUpdateMeta key={ticket_update.id}>
+                  <TicketUpdateTitle>{ticket_update.title}</TicketUpdateTitle>
+                  {ticket_update.description && (
+                    <TicketUpdateDescription>
+                      {ticket_update.description}
+                    </TicketUpdateDescription>
+                  )}
+                  {index + 1 === ticket_updates.length ? (
+                    <TicketActions>
                       <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
-                      <TextButton>Deletar</TextButton>
+                        <ButtonText>Deletar</ButtonText>
                       </ActionButton>
-                      ) : null}
                       <ActionButton>
-                      <TextButton>Editar</TextButton>
+                        <ButtonText>Editar</ButtonText>
                       </ActionButton>
-                    </TicketActions> */}
-              </TicketTypeMeta>
-            </TicketContainer>
+                    </TicketActions>
+                  ) : null}
+                </TicketUpdateMeta>
+              </TicketContainer>
+            </TicketWrap>
           );
         })}
-        <Button>Nova Atualização</Button>
+        <Button style={{ marginBottom: 30 }}>Nova Atualização</Button>
       </Container>
     </>
   );

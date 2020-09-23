@@ -25,13 +25,6 @@ const containerVariations = {
   `,
 };
 
-export const Container = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
-`;
-
 export const Header = styled.View`
   padding: 24px;
   background: #28262e;
@@ -66,62 +59,59 @@ export const BackToSignIn = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
-export const TicketType = styled.View`
+export const Container = styled.ScrollView`
+  flex: 1;
+  padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
+`;
+
+export const TicketWrap = styled.View`
   flex-direction: row;
   align-items: center;
 `;
 
-export const TicketTypeMeta = styled.View`
-  flex: 1;
-  margin-left: 20px;
+export const TicketContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 0 4px 0;
 `;
 
-export const TicketTypeTitle = styled.Text`
+export const TicketLine = styled.View`
+  background: #dec81b;
+  height: 100%;
+  width: 3px;
+  transform: translateX(9px);
+`;
+
+export const TicketUpdateMeta = styled.View`
+  flex: 1;
+  margin-left: 12px;
+  background: #3e3b47;
+  padding: 8px;
+  border-radius: 8px;
+`;
+
+export const TicketUpdateTitle = styled.Text`
   font-size: 18px;
   font-weight: 700;
   color: #f4ede8;
 `;
 
-export const TicketTypeText = styled.Text`
-  margin-top: 4px;
+export const TicketUpdateDescription = styled.Text`
+  font-size: 16px;
+  margin-top: 6px;
   color: #f4ede8;
 `;
 
-export const IconText = styled.Text`
-  color: #f4ede8;
-  text-align: center;
-`;
-
-export const TicketsListTitle = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #f4ede8;
-`;
-
-export const TicketContainer = styled(RectButton)`
-  flex: 1;
-  width: 100%;
-  background: #3e3b47;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 16px;
-  align-items: flex-start;
-`;
-
-export const TicketInfo = styled.View`
-  flex: 1;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-export const TicketMeta = styled.View`
-  align-items: center;
-  margin-top: 8px;
+export const TicketActions = styled.View`
   flex-direction: row;
+  margin-left: auto;
 `;
 
-export const TicketMetaText = styled.Text<ContainerProps>`
-  margin-left: 8px;
-  ${props => containerVariations[props.type || 'default']}
+export const ActionButton = styled.TouchableOpacity`
+  padding: 4px 8px;
+  margin: 4px;
+  border-radius: 4px;
+  background: #f4ede8;
 `;
+
+export const ButtonText = styled.Text``;
