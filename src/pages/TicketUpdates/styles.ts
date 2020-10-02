@@ -3,27 +3,9 @@ import { Platform } from 'react-native';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { RectButton } from 'react-native-gesture-handler';
 
-interface ContainerProps {
-  type?: 'success' | 'info' | 'alert' | 'error' | 'default';
+interface StatsProps {
+  completed?: true | false;
 }
-
-const containerVariations = {
-  success: css`
-    color: #78da55;
-  `,
-  info: css`
-    color: #e6fffa;
-  `,
-  default: css`
-    color: #999591;
-  `,
-  alert: css`
-    color: #dec81b;
-  `,
-  error: css`
-    color: #c53030;
-  `,
-};
 
 export const Header = styled.View`
   padding: 24px;
@@ -75,8 +57,14 @@ export const TicketContainer = styled.View`
   padding: 4px 0 4px 0;
 `;
 
-export const TicketLine = styled.View`
+export const TicketLine = styled.View<StatsProps>`
   background: #dec81b;
+
+  ${props =>
+    props.completed === false &&
+    css`
+      background: #3e3b47;
+    `}
   height: 100%;
   width: 3px;
   transform: translateX(9px);
@@ -103,6 +91,7 @@ export const TicketUpdateDescription = styled.Text`
 `;
 
 export const TicketActions = styled.View`
+  margin-top: 4px;
   flex-direction: row;
   margin-left: auto;
 `;
@@ -114,4 +103,6 @@ export const ActionButton = styled.TouchableOpacity`
   background: #f4ede8;
 `;
 
-export const ButtonText = styled.Text``;
+export const ButtonText = styled.Text`
+  /* font-weight: 700; */
+`;

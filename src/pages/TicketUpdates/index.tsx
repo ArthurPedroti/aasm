@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Entypo';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Button from '../../components/Button';
@@ -28,7 +27,8 @@ interface RouteParams {
     id: string;
     flag: string;
     title: string;
-    description: string;
+    completed: boolean;
+    description: string | null;
     updated_at: string;
     created_at: string;
   }[];
@@ -37,9 +37,10 @@ interface RouteParams {
 const TicketUpdates: React.FC = () => {
   const route = useRoute();
   const { ticket_updates } = route.params as RouteParams;
+  const [loading, setloading] = useState(true);
   const { user } = useAuth();
   const navigation = useNavigation();
-  const [currentPage, setCurrentPage] = useState<number>(2);
+  const [addedSteps, setAddedSteps] = useState(0);
 
   const navigationToShowTicket = useCallback(
     (ticket_update: TicketUpdate) => {
@@ -48,22 +49,82 @@ const TicketUpdates: React.FC = () => {
     [navigation],
   );
 
-  console.log(ticket_updates);
-
   const tickets_standart = [
     {
       title: 'Aguardando classificação',
       description: null,
+      completed: false,
+      id: '',
+      flag: '',
+      updated_at: '',
+      created_at: '',
     },
     {
-      title: 'Aguardando classificação',
+      title: 'Classificado',
       description: null,
+      completed: false,
+      id: '',
+      flag: '',
+      updated_at: '',
+      created_at: '',
     },
     {
-      title: 'Aguardando classificação',
+      title: 'Primeiro contato',
       description: null,
+      completed: false,
+      id: '',
+      flag: '',
+      updated_at: '',
+      created_at: '',
+    },
+    {
+      title: 'Envio de técnico',
+      description: null,
+      completed: false,
+      id: '',
+      flag: '',
+      updated_at: '',
+      created_at: '',
+    },
+    {
+      title: 'Em antendimento',
+      description: null,
+      completed: false,
+      id: '',
+      flag: '',
+      updated_at: '',
+      created_at: '',
     },
   ];
+
+  useEffect(() => {
+    console.log('test');
+    const checkUpdates = () => {
+      ticket_updates.forEach(item => {
+        const newItem = item;
+        newItem.completed = true;
+        return newItem;
+      });
+      tickets_standart.forEach(item => {
+        console.log(item);
+        const ticketFound = ticket_updates.find(
+          itemTU => itemTU.title === item.title,
+        );
+
+        if (ticketFound) {
+          console.log('achou');
+        } else {
+          setAddedSteps(addedSteps + 1);
+          ticket_updates.push(item);
+          console.log(item);
+          console.log(ticket_updates);
+        }
+        console.log(ticketFound);
+      });
+    };
+    checkUpdates();
+    setloading(false);
+  }, []);
 
   return (
     <>
@@ -75,35 +136,44 @@ const TicketUpdates: React.FC = () => {
         <HeaderTitle>Atualizações</HeaderTitle>
       </Header>
       <Container>
-        {ticket_updates.map(ticket_update => {
-          const index = ticket_updates.indexOf(ticket_update);
-          return (
-            <TicketWrap>
-              <TicketLine />
-              <TicketContainer>
-                <Icon name="controller-record" size={16} color="#dec81b" />
-                <TicketUpdateMeta key={ticket_update.id}>
-                  <TicketUpdateTitle>{ticket_update.title}</TicketUpdateTitle>
-                  {ticket_update.description && (
-                    <TicketUpdateDescription>
-                      {ticket_update.description}
-                    </TicketUpdateDescription>
+        {loading !== true ? (
+          ticket_updates.map(ticket_update => {
+            const index = ticket_updates.indexOf(ticket_update);
+            return (
+              <TicketWrap>
+                <TicketLine completed={ticket_update.completed} />
+                <TicketContainer>
+                  {ticket_update.completed === true ? (
+                    <Icon name="controller-record" size={16} color="#dec81b" />
+                  ) : (
+                    <Icon name="controller-record" size={16} color="#3e3b47" />
                   )}
-                  {index + 1 === ticket_updates.length ? (
-                    <TicketActions>
-                      <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
-                        <ButtonText>Deletar</ButtonText>
-                      </ActionButton>
-                      <ActionButton>
-                        <ButtonText>Editar</ButtonText>
-                      </ActionButton>
-                    </TicketActions>
-                  ) : null}
-                </TicketUpdateMeta>
-              </TicketContainer>
-            </TicketWrap>
-          );
-        })}
+                  <TicketUpdateMeta key={ticket_update.id}>
+                    <TicketUpdateTitle>{ticket_update.title}</TicketUpdateTitle>
+                    {ticket_update.description && (
+                      <TicketUpdateDescription>
+                        {ticket_update.description}
+                      </TicketUpdateDescription>
+                    )}
+                    {console.log(addedSteps)}
+                    {index + 1 === ticket_updates.length - addedSteps ? (
+                      <TicketActions>
+                        <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
+                          <ButtonText>Deletar</ButtonText>
+                        </ActionButton>
+                        <ActionButton>
+                          <ButtonText>Editar</ButtonText>
+                        </ActionButton>
+                      </TicketActions>
+                    ) : null}
+                  </TicketUpdateMeta>
+                </TicketContainer>
+              </TicketWrap>
+            );
+          })
+        ) : (
+          <HeaderTitle>Carregando...</HeaderTitle>
+        )}
         <Button style={{ marginBottom: 30 }}>Nova Atualização</Button>
       </Container>
     </>
