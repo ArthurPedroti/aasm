@@ -24,7 +24,7 @@ interface RouteParams {
     id: string;
     flag: string;
     title: string;
-    description: string;
+    description: string | null;
     updated_at: string;
     created_at: string;
   };
@@ -34,7 +34,7 @@ export interface TicketUpdate {
   id: string;
   flag: string;
   title: string;
-  description: string;
+  description: string | null;
   updated_at: string;
   created_at: string;
 }
@@ -42,7 +42,6 @@ export interface TicketUpdate {
 const ShowTicketUpdate: React.FC = () => {
   const route = useRoute();
   const { ticket_update } = route.params as RouteParams;
-  const { user } = useAuth();
   const navigation = useNavigation();
 
   return (

@@ -3,8 +3,6 @@ import Icon from 'react-native-vector-icons/Entypo';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Button from '../../components/Button';
 
-import { useAuth } from '../../hooks/auth';
-
 import {
   Container,
   Header,
@@ -38,7 +36,7 @@ const TicketUpdates: React.FC = () => {
   const route = useRoute();
   const { ticket_updates } = route.params as RouteParams;
   const [loading, setloading] = useState(true);
-  const { user } = useAuth();
+  const [finalActiveUpdate, setFinalActiveUpdate] = useState(0);
   const navigation = useNavigation();
   const [addedSteps, setAddedSteps] = useState(0);
 
@@ -98,31 +96,33 @@ const TicketUpdates: React.FC = () => {
   ];
 
   useEffect(() => {
-    console.log('test');
-    const checkUpdates = () => {
+    const checkUpdates = (): void => {
       ticket_updates.forEach(item => {
         const newItem = item;
         newItem.completed = true;
         return newItem;
       });
       tickets_standart.forEach(item => {
-        console.log(item);
         const ticketFound = ticket_updates.find(
           itemTU => itemTU.title === item.title,
         );
 
-        if (ticketFound) {
-          console.log('achou');
-        } else {
+        if (!ticketFound) {
           setAddedSteps(addedSteps + 1);
           ticket_updates.push(item);
-          console.log(item);
-          console.log(ticket_updates);
         }
-        console.log(ticketFound);
       });
     };
+
     checkUpdates();
+    const completedItemCount = ticket_updates.reduce((acc, currentValue) => {
+      if (currentValue.completed === true) {
+        const newAcc = acc + 1;
+        return newAcc;
+      }
+      return acc;
+    }, 0);
+    setFinalActiveUpdate(completedItemCount);
     setloading(false);
   }, []);
 
@@ -155,13 +155,14 @@ const TicketUpdates: React.FC = () => {
                         {ticket_update.description}
                       </TicketUpdateDescription>
                     )}
-                    {console.log(addedSteps)}
-                    {index + 1 === ticket_updates.length - addedSteps ? (
+                    {index + 1 === finalActiveUpdate ? (
                       <TicketActions>
                         <ActionButton style={{ backgroundColor: '#e9a5a5' }}>
                           <ButtonText>Deletar</ButtonText>
                         </ActionButton>
-                        <ActionButton>
+                        <ActionButton
+                          onPress={() => navigationToShowTicket(ticket_update)}
+                        >
                           <ButtonText>Editar</ButtonText>
                         </ActionButton>
                       </TicketActions>
@@ -174,7 +175,12 @@ const TicketUpdates: React.FC = () => {
         ) : (
           <HeaderTitle>Carregando...</HeaderTitle>
         )}
-        <Button style={{ marginBottom: 30 }}>Nova Atualização</Button>
+        <Button
+          onPress={() => navigation.navigate('CreateTicketUpdate')}
+          style={{ marginBottom: 30 }}
+        >
+          Nova Atualização
+        </Button>
       </Container>
     </>
   );

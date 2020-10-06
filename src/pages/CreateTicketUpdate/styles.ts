@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { RectButton } from 'react-native-gesture-handler';
 
-interface TypeProps {
+interface FlagProps {
   selected: boolean;
 }
 
@@ -46,7 +46,7 @@ export const BackToSignIn = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
-export const Type = styled.View``;
+export const Flag = styled.View``;
 
 export const Title = styled.Text`
   color: #999591;
@@ -73,14 +73,14 @@ export const SectionContent = styled.ScrollView.attrs({
   showsHorizontalScrollIndicator: false,
 })``;
 
-export const TypeOption = styled(RectButton)<TypeProps>`
+export const FlagOption = styled(RectButton)<FlagProps>`
   padding: 12px;
   background: ${props => (props.selected ? '#dec81b' : '#3e3b47')};
   border-radius: 10px;
   margin-right: 8px;
 `;
 
-export const TypeText = styled.Text<TypeProps>`
+export const FlagText = styled.Text<FlagProps>`
   color: ${props => (props.selected ? '#232129' : '#f4ede8')};
   font-size: 16px;
 `;
