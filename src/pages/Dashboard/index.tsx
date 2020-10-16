@@ -128,42 +128,52 @@ const Dashboard: React.FC = () => {
         ListFooterComponent={<View style={{ margin: 32 }} />}
         ListHeaderComponent={<TicketsListTitle>Seus chamados</TicketsListTitle>}
         renderItem={({ item: ticket }) => (
+          /**
+           * Máquina não parada:
+           * 0 a 19 days => Normal
+           * 20 a 27 days => Important
+           * from 28 days => Urgent
+           *
+           * Máquina parada:
+           * 0 a 7 days => Important
+           * from 8 days => Urgent
+           *
+           * Pendencia jurídica => always Urgent
+           */
           <TicketContainer onPress={() => navigationToShowTicket(ticket)}>
             {ticket.type === 'Máquina não parada' &&
-            -differenceInDays(parseISO(ticket.created_at), Date.now()) < 10 ? (
+            differenceInDays(Date.now(), parseISO(ticket.created_at)) < 20 ? (
               <TicketType>
                 <Icon name="alert-circle" size={72} color="#e6fffa" />
                 <TicketTypeText>
-                  {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
-                  dias
+                  {differenceInDays(Date.now(), parseISO(ticket.created_at))}{' '}
+                  dias{' '}
                 </TicketTypeText>
               </TicketType>
             ) : null}
             {(ticket.type === 'Máquina parada' &&
-              -differenceInDays(parseISO(ticket.created_at), Date.now()) < 2) ||
+              differenceInDays(Date.now(), parseISO(ticket.created_at)) < 8) ||
             (ticket.type === 'Máquina não parada' &&
-              -differenceInDays(parseISO(ticket.created_at), Date.now()) < 20 &&
-              -differenceInDays(parseISO(ticket.created_at), Date.now()) >
-                9) ? (
+              differenceInDays(Date.now(), parseISO(ticket.created_at)) > 19 &&
+              differenceInDays(Date.now(), parseISO(ticket.created_at)) <
+                28) ? (
               <TicketType>
                 <Icon name="alert-triangle" size={72} color="#dec81b" />
                 <TicketTypeText>
-                  {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
+                  {differenceInDays(Date.now(), parseISO(ticket.created_at))}{' '}
                   dias
                 </TicketTypeText>
               </TicketType>
             ) : null}
             {ticket.type === 'Pendência jurídica' ||
             (ticket.type === 'Máquina não parada' &&
-              -differenceInDays(parseISO(ticket.created_at), Date.now()) >
-                19) ||
+              differenceInDays(Date.now(), parseISO(ticket.created_at)) > 27) ||
             (ticket.type === 'Máquina parada' &&
-              -differenceInDays(parseISO(ticket.created_at), Date.now()) >
-                1) ? (
+              differenceInDays(Date.now(), parseISO(ticket.created_at)) > 7) ? (
               <TicketType>
                 <Icon name="alert-octagon" size={72} color="#c53030" />
                 <TicketTypeText>
-                  {-differenceInDays(parseISO(ticket.created_at), Date.now())}{' '}
+                  {differenceInDays(Date.now(), parseISO(ticket.created_at))}{' '}
                   dias
                 </TicketTypeText>
               </TicketType>

@@ -5,6 +5,8 @@ import Dashboard from '../pages/Dashboard';
 import CreateTicket from '../pages/CreateTicket';
 import UserEditTicket from '../pages/UserEditTicket';
 import ShowTicket from '../pages/ShowTicket';
+import UserTicketUpdates from '../pages/UserTicketUpdates';
+import ShowTicketUpdate from '../pages/ShowTicketUpdate';
 
 const App = createStackNavigator();
 
@@ -19,6 +21,8 @@ const UserRoutes: React.FC = () => (
     <App.Screen name="CreateTicket" component={CreateTicket} />
     <App.Screen name="UserEditTicket" component={UserEditTicket} />
     <App.Screen name="ShowTicket" component={ShowTicket} />
+    <App.Screen name="UserTicketUpdates" component={UserTicketUpdates} />
+    <App.Screen name="ShowTicketUpdate" component={ShowTicketUpdate} />
   </App.Navigator>
 );
 

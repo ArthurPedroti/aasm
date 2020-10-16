@@ -115,16 +115,10 @@ export const TicketInfo = styled.View`
   margin-top: 20px;
 `;
 
-export const TicketName = styled.Text`
-  font-size: 18px;
-  font-weight: 700;
-  color: #f4ede8;
-`;
-
 export const TicketMeta = styled.View`
+  align-items: center;
   margin-top: 8px;
   flex-direction: row;
-  align-items: center;
 `;
 
 export const TicketMetaText = styled.Text<ContainerProps>`

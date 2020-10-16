@@ -28,6 +28,7 @@ import {
   TicketTypeText,
   TicketTypeMeta,
 } from './styles';
+import { useFetch } from '../../hooks/useFetch';
 
 interface RouteParams {
   ticket: {
@@ -46,12 +47,23 @@ interface RouteParams {
   };
 }
 
+export interface TicketUpdate {
+  id: string;
+  flag: string;
+  title: string;
+  description: string | null;
+  updated_at: string;
+  created_at: string;
+}
+
 const ShowTicket: React.FC = () => {
   const route = useRoute();
-  const { user } = useAuth();
-  const navigation = useNavigation();
-
   const { ticket } = route.params as RouteParams;
+  const { user } = useAuth();
+  const { data: ticket_updates } = useFetch<TicketUpdate[]>(
+    `ticket-updates/${ticket.id}`,
+  );
+  const navigation = useNavigation();
 
   const navigationToEditTicket = useCallback(
     ticketRecieved => {
@@ -62,30 +74,49 @@ const ShowTicket: React.FC = () => {
     [navigation, user],
   );
 
+  const navigationToTicketUpdates = useCallback(
+    ticketUpdates => {
+      user.role === 'admin'
+        ? navigation.navigate('TicketUpdates', {
+            ticket_updates: ticketUpdates,
+            ticket,
+          })
+        : navigation.navigate('UserTicketUpdates', {
+            ticket_updates: ticketUpdates,
+            ticket,
+          });
+    },
+    [navigation, ticket, user.role],
+  );
+
   const handleDelete = useCallback(async () => {
     try {
       await api.delete(`/tickets/${ticket.id}`);
 
-      Alert.alert('Chamado deletado com sucesso!');
+      Alert.alert('Chamado cancelado com sucesso!');
       mutateGlobal('tickets/me');
 
-      navigation.navigate('Dashboard');
+      if (user.role === 'admin') {
+        navigation.navigate('AdminDashboard');
+      } else {
+        navigation.navigate('Dashboard');
+      }
     } catch (err) {
       Alert.alert(
         'Erro ao deletar',
-        'Ocorreu um erro ao deletar o chamado, tente novamente.',
+        'Ocorreu um erro ao cancelar o chamado, tente novamente.',
       );
     }
-  }, [navigation, ticket]);
+  }, [navigation, ticket, user]);
 
   const handleDeleteTicket = useCallback(() => {
-    Alert.alert('Você tem certeza que deseja deletar esse chamado?', '', [
+    Alert.alert('Você tem certeza que deseja cancelar esse chamado?', '', [
       {
-        text: 'Cancelar',
+        text: 'Não',
         style: 'cancel',
       },
       {
-        text: 'Deletar',
+        text: 'Sim',
         onPress: () => handleDelete(),
       },
     ]);
@@ -109,8 +140,7 @@ const ShowTicket: React.FC = () => {
           <Container>
             <TicketContainer>
               {ticket.type === 'Máquina não parada' &&
-              -differenceInDays(parseISO(ticket.created_at), Date.now()) <
-                10 ? (
+              differenceInDays(Date.now(), parseISO(ticket.created_at)) < 20 ? (
                 <TicketType>
                   <Icon name="alert-circle" size={72} color="#e6fffa" />
                   <TicketTypeMeta>
@@ -129,13 +159,13 @@ const ShowTicket: React.FC = () => {
                 </TicketType>
               ) : null}
               {(ticket.type === 'Máquina parada' &&
-                -differenceInDays(parseISO(ticket.created_at), Date.now()) <
-                  2) ||
+                differenceInDays(Date.now(), parseISO(ticket.created_at)) <
+                  8) ||
               (ticket.type === 'Máquina não parada' &&
-                -differenceInDays(parseISO(ticket.created_at), Date.now()) <
-                  20 &&
-                -differenceInDays(parseISO(ticket.created_at), Date.now()) >
-                  9) ? (
+                differenceInDays(Date.now(), parseISO(ticket.created_at)) >
+                  19 &&
+                differenceInDays(Date.now(), parseISO(ticket.created_at)) <
+                  28) ? (
                 <TicketType>
                   <Icon name="alert-triangle" size={72} color="#dec81b" />
                   <TicketTypeMeta>
@@ -155,11 +185,11 @@ const ShowTicket: React.FC = () => {
               ) : null}
               {ticket.type === 'Pendência jurídica' ||
               (ticket.type === 'Máquina não parada' &&
-                -differenceInDays(parseISO(ticket.created_at), Date.now()) >
-                  19) ||
+                differenceInDays(Date.now(), parseISO(ticket.created_at)) >
+                  27) ||
               (ticket.type === 'Máquina parada' &&
-                -differenceInDays(parseISO(ticket.created_at), Date.now()) >
-                  1) ? (
+                differenceInDays(Date.now(), parseISO(ticket.created_at)) >
+                  7) ? (
                 <TicketType>
                   <Icon name="alert-octagon" size={72} color="#c53030" />
                   <TicketTypeMeta>
@@ -245,12 +275,34 @@ const ShowTicket: React.FC = () => {
               </TicketInfo>
             </TicketContainer>
 
+            <TicketContainer>
+              <TicketType>
+                <TicketTypeMeta>
+                  <TicketTypeTitle>ÚLTIMA ATUALIZAÇÃO</TicketTypeTitle>
+                </TicketTypeMeta>
+              </TicketType>
+
+              <TicketInfo>
+                {ticket_updates ? (
+                  <TicketMeta>
+                    <Icon name="chevron-right" size={14} color="#999591" />
+                    <TicketMetaText type="default">
+                      {ticket_updates[ticket_updates.length - 1].title}
+                    </TicketMetaText>
+                  </TicketMeta>
+                ) : null}
+              </TicketInfo>
+              <Button onPress={() => navigationToTicketUpdates(ticket_updates)}>
+                Ver mais
+              </Button>
+            </TicketContainer>
+
             <Button onPress={() => navigationToEditTicket(ticket)}>
               Editar
             </Button>
 
             <Button type="error" onPress={() => handleDeleteTicket()}>
-              Deletar
+              Cancelar
             </Button>
           </Container>
         </ScrollView>
