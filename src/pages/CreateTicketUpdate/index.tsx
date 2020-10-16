@@ -1,23 +1,19 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { TextInput, Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
-import { mutate as mutateGlobal } from 'swr';
 import * as Yup from 'yup';
 
-import { Modalize } from 'react-native-modalize';
-import { useFetch } from '../../hooks/useFetch';
+import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import Select from '../../components/Select';
-import SearchInput from '../../components/SearchInput';
 
 import {
   Container,
@@ -32,47 +28,52 @@ import {
   SectionContent,
   FlagOption,
   FlagText,
-  Item,
-  ItemText,
-  FlatTitle,
-  HeaderModal,
-  FooterText,
-  ItemContent,
 } from './styles';
+
+interface TicketUpdate {
+  id: string;
+  ticket_id: string;
+  flag: string;
+  title: string;
+  completed: boolean;
+  description: string | null;
+  updated_at: string;
+  created_at: string;
+}
+
+interface RouteParams {
+  ticket: {
+    id: string;
+    user: {
+      name: string;
+    };
+    client_name: string;
+    classification: string;
+    equipment: string;
+    type: string;
+    status: string;
+    description: string;
+    updated_at: string;
+    created_at: string;
+  };
+  ticket_updates: {
+    id: string;
+    ticket_id: string;
+    flag: string;
+    title: string;
+    completed: boolean;
+    description: string | null;
+    updated_at: string;
+    created_at: string;
+  }[];
+}
 
 interface CreateTicketFormData {
   title: string;
-  flag: string;
-  description: string;
-}
-
-interface FlatItemProps {
-  item: Client;
-}
-
-interface Item {
-  name: string;
-}
-
-export interface Client {
-  codigo_cliente: string;
-  razao_social: string;
-  cnpj: string;
-  inscricao_estadual: string;
-  endereco: string;
-  bairro: string;
-  municipio: string;
-  uf: string;
-  cep: string;
-  contato: string;
-  email: string;
-  telefone: string;
+  description: string | null;
 }
 
 const flags = [
-  {
-    name: 'Aguardando classificação',
-  },
   {
     name: 'Classificado',
   },
@@ -94,9 +95,10 @@ const flags = [
 ];
 
 const CreateTicketUpdate: React.FC = () => {
-  const modalizeRef = useRef<Modalize>(null);
+  const route = useRoute();
+  const { user } = useAuth();
+  const { ticket, ticket_updates } = route.params as RouteParams;
   const [selectedFlag, setSelectedFlag] = useState('');
-  const [selectedClient, setSelectedClient] = useState<Client>({} as Client);
   const [flagError, setFlagError] = useState('');
 
   const formRef = useRef<FormHandles>(null);
@@ -105,11 +107,6 @@ const CreateTicketUpdate: React.FC = () => {
   const equipmentInputRef = useRef<TextInput>(null);
   const flagInputRef = useRef<TextInput>(null);
   const descriptionInputRef = useRef<TextInput>(null);
-
-  const handleSelectClient = useCallback(item => {
-    setSelectedClient(item);
-    modalizeRef.current?.close();
-  }, []);
 
   const handleFlagChanged = useCallback(
     (flag: string) => {
@@ -126,12 +123,10 @@ const CreateTicketUpdate: React.FC = () => {
 
         const schemaWithSpecificFlag = Yup.object().shape({
           title: Yup.string().required('Equipamento obrigatório'),
-          flag: Yup.string().required('Equipamento obrigatório'),
           description: Yup.string(),
         });
 
         const schemaWithoutSpecificFlag = Yup.object().shape({
-          title: Yup.string().required('Equipamento obrigatório'),
           description: Yup.string(),
         });
 
@@ -148,25 +143,34 @@ const CreateTicketUpdate: React.FC = () => {
             abortEarly: false,
           });
         }
-
         let completeData;
         if (selectedFlag !== 'Outros') {
           completeData = {
-            ...data,
-            flag: selectedFlag,
+            ticket_id: ticket.id,
+            title: selectedFlag,
           };
         } else {
           completeData = {
-            ...data,
+            title: data.title,
+            ticket_id: ticket.id,
           };
         }
 
-        console.log(completeData);
-        await api.post(`/ticket-updates`, completeData);
+        if (data.description !== '') {
+          completeData = {
+            ...completeData,
+            description: data.description,
+          };
+        }
+
+        await api.post<TicketUpdate>(`/ticket-updates`, completeData);
 
         Alert.alert('Chamado criado com sucesso!');
-
-        navigation.goBack();
+        if (user.role === 'admin') {
+          navigation.navigate('AdminDashboard');
+        } else {
+          navigation.navigate('Dashboard');
+        }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -180,17 +184,7 @@ const CreateTicketUpdate: React.FC = () => {
         );
       }
     },
-    [navigation, selectedFlag],
-  );
-
-  const renderItem = ({ item }: FlatItemProps): React.ReactNode => (
-    <Item onPress={() => handleSelectClient(item)}>
-      <ItemContent>
-        <ItemText>{item.razao_social.slice(0, 35)}</ItemText>
-        {item.cnpj !== '' ? <ItemText>CNPJ: {item.cnpj}</ItemText> : null}
-      </ItemContent>
-      <Icon name="chevron-right" size={20} />
-    </Item>
+    [navigation, selectedFlag, ticket.id, ticket_updates],
   );
 
   return (
@@ -204,17 +198,6 @@ const CreateTicketUpdate: React.FC = () => {
       </Header>
       <Container>
         <Form ref={formRef} onSubmit={handleCreateTicket}>
-          <Input
-            ref={equipmentInputRef}
-            autoCapitalize="words"
-            name="title"
-            icon="type"
-            placeholder="Título"
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              flagInputRef.current?.focus();
-            }}
-          />
           <Flag>
             <SectionMetaTitle>
               <Title>Escolha a etapa</Title>
@@ -240,7 +223,7 @@ const CreateTicketUpdate: React.FC = () => {
             <Input
               ref={equipmentInputRef}
               autoCapitalize="words"
-              name="flag"
+              name="title"
               icon="flag"
               placeholder="Digite o nome da etapa"
               returnKeyType="next"

@@ -58,7 +58,7 @@ interface TicketUpdate {
   created_at: string;
 }
 
-const TicketUpdates: React.FC = () => {
+const UserTicketUpdates: React.FC = () => {
   const route = useRoute();
   const { user } = useAuth();
 
@@ -101,6 +101,7 @@ const TicketUpdates: React.FC = () => {
           navigation.navigate('Dashboard');
         }
       } catch (err) {
+        console.log(err);
         Alert.alert(
           'Erro ao deletar',
           'Ocorreu um erro ao cancelar o chamado, tente novamente.',
@@ -250,21 +251,6 @@ const TicketUpdates: React.FC = () => {
                         {ticket_update.description}
                       </TicketUpdateDescription>
                     )}
-                    {index + 1 === finalActiveUpdate ? (
-                      <TicketActions>
-                        <ActionButton
-                          onPress={() => handleDeleteTicket(ticket_update.id)}
-                          style={{ backgroundColor: '#e9a5a5' }}
-                        >
-                          <ButtonText>Deletar</ButtonText>
-                        </ActionButton>
-                        <ActionButton
-                          onPress={() => navigationToShowTicket(ticket_update)}
-                        >
-                          <ButtonText>Editar</ButtonText>
-                        </ActionButton>
-                      </TicketActions>
-                    ) : null}
                   </TicketUpdateMeta>
                 </TicketContainer>
               </TicketWrap>
@@ -273,15 +259,9 @@ const TicketUpdates: React.FC = () => {
         ) : (
           <HeaderTitle>Carregando...</HeaderTitle>
         )}
-        <Button
-          onPress={() => navigationToCreateTicket()}
-          style={{ marginBottom: 30 }}
-        >
-          Nova Atualização
-        </Button>
       </Container>
     </>
   );
 };
 
-export default TicketUpdates;
+export default UserTicketUpdates;

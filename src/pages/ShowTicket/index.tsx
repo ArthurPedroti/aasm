@@ -76,9 +76,17 @@ const ShowTicket: React.FC = () => {
 
   const navigationToTicketUpdates = useCallback(
     ticketUpdates => {
-      navigation.navigate('TicketUpdates', { ticket_updates: ticketUpdates });
+      user.role === 'admin'
+        ? navigation.navigate('TicketUpdates', {
+            ticket_updates: ticketUpdates,
+            ticket,
+          })
+        : navigation.navigate('UserTicketUpdates', {
+            ticket_updates: ticketUpdates,
+            ticket,
+          });
     },
-    [navigation],
+    [navigation, ticket, user.role],
   );
 
   const handleDelete = useCallback(async () => {
@@ -277,7 +285,7 @@ const ShowTicket: React.FC = () => {
               <TicketInfo>
                 {ticket_updates ? (
                   <TicketMeta>
-                    <Icon name="circle" size={14} color="#999591" />
+                    <Icon name="chevron-right" size={14} color="#999591" />
                     <TicketMetaText type="default">
                       {ticket_updates[ticket_updates.length - 1].title}
                     </TicketMetaText>

@@ -1,34 +1,14 @@
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { Platform } from 'react-native';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { RectButton } from 'react-native-gesture-handler';
 
-interface ContainerProps {
-  type?: 'success' | 'info' | 'alert' | 'error' | 'default';
+interface FlagProps {
+  selected: boolean;
 }
-
-const containerVariations = {
-  success: css`
-    color: #78da55;
-  `,
-  info: css`
-    color: #e6fffa;
-  `,
-  default: css`
-    color: #999591;
-  `,
-  alert: css`
-    color: #dec81b;
-  `,
-  error: css`
-    color: #c53030;
-  `,
-};
 
 export const Container = styled.ScrollView`
   flex: 1;
-  align-items: center;
-  justify-content: center;
   padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
 `;
 
@@ -66,62 +46,71 @@ export const BackToSignIn = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
-export const TicketType = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
+export const Flag = styled.View``;
 
-export const TicketTypeMeta = styled.View`
-  flex: 1;
-  margin-left: 20px;
-`;
-
-export const TicketTypeTitle = styled.Text`
+export const Title = styled.Text`
+  color: #999591;
   font-size: 18px;
-  font-weight: 700;
-  color: #f4ede8;
 `;
 
-export const TicketTypeText = styled.Text`
-  margin-top: 4px;
-  color: #f4ede8;
-`;
-
-export const IconText = styled.Text`
-  color: #f4ede8;
-  text-align: center;
-`;
-
-export const TicketsListTitle = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #f4ede8;
-`;
-
-export const TicketContainer = styled(RectButton)`
-  flex: 1;
-  width: 100%;
-  background: #3e3b47;
-  border-radius: 10px;
-  padding: 20px;
+export const Section = styled.View`
   margin-bottom: 16px;
-  align-items: flex-start;
 `;
 
-export const TicketInfo = styled.View`
-  flex: 1;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-export const TicketMeta = styled.View`
-  align-items: center;
-  margin-top: 8px;
+export const SectionMetaTitle = styled.View`
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+export const SectionError = styled.Text`
+  color: #c53030;
+  font-size: 16px;
 `;
 
-export const TicketMetaText = styled.Text<ContainerProps>`
-  margin-left: 8px;
-  ${props => containerVariations[props.type || 'default']}
+export const SectionContent = styled.ScrollView.attrs({
+  horizontal: true,
+  showsHorizontalScrollIndicator: false,
+})``;
+
+export const FlagOption = styled(RectButton)<FlagProps>`
+  padding: 12px;
+  background: ${props => (props.selected ? '#dec81b' : '#3e3b47')};
+  border-radius: 10px;
+  margin-right: 8px;
 `;
+
+export const FlagText = styled.Text<FlagProps>`
+  color: ${props => (props.selected ? '#232129' : '#f4ede8')};
+  font-size: 16px;
+`;
+
+export const Item = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+export const ItemText = styled.Text`
+  flex: 1;
+  font-size: 16px;
+`;
+
+export const FlatTitle = styled.Text`
+  font-size: 24px;
+  align-self: center;
+  margin-bottom: 12px;
+`;
+
+export const HeaderModal = styled.View`
+  margin-bottom: 20px;
+`;
+
+export const FooterText = styled.Text`
+  color: #3e3b47;
+  margin-top: 30px;
+  align-self: center;
+`;
+
+export const ItemContent = styled.View``;
