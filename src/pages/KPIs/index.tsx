@@ -22,11 +22,11 @@ export interface Ticket {
 const data2 = [
   {
     date: new Date('2019-09-01').getTime(),
-    value: 0,
+    value: 30,
   },
   {
     date: new Date('2019-10-01').getTime(),
-    value: 0,
+    value: 40,
   },
   {
     date: new Date('2019-11-01').getTime(),
@@ -38,7 +38,7 @@ const data2 = [
   },
   {
     date: new Date('2020-01-01').getTime(),
-    value: 0,
+    value: 70,
   },
   {
     date: new Date('2020-02-01').getTime(),

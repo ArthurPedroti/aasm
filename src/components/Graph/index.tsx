@@ -18,26 +18,28 @@ interface GraphProps {
 }
 
 const Graph = ({ data }: GraphProps): any => {
+  const margin = 'xl';
   const canvasWidth = wWidth - theme.spacing.m * 2;
   const canvasHeight = canvasWidth * aspectRation;
-  const width = canvasWidth - theme.spacing.l;
-  const height = canvasHeight - theme.spacing.l;
+  const width = canvasWidth - theme.spacing[margin];
+  const height = canvasHeight - theme.spacing[margin];
   const step = width / data.length;
   const values = data.map(p => p.value);
   const dates = data.map(p => p.date);
   const minX = Math.min(...dates);
   const maxX = Math.max(...dates);
-  const minY = Math.max(...values);
+  const minY = Math.min(...values);
   const maxY = Math.max(...values);
   return (
-    <Box paddingBottom="l" paddingLeft="l">
-      <Underlay minY={minY} maxY={maxY} dates={dates} />
-      <Box
-        width={width}
-        height={height}
-        marginTop="xl"
-        // backgroundColor="secondary"
-      >
+    <Box
+      marginTop="xl"
+      paddingBottom={margin}
+      paddingLeft={margin}
+      alignItems="center"
+      marginHorizontal="m"
+    >
+      <Underlay minY={minY} maxY={maxY} dates={dates} step={step} />
+      <Box width={width} height={height}>
         {data.map((point, i) => {
           if (point.value === 0) {
             return null;
@@ -49,7 +51,7 @@ const Graph = ({ data }: GraphProps): any => {
               left={i * step}
               bottom={0}
               width={step}
-              height={lerp(0, height, point.value / height)}
+              height={(point.value / maxY) * height + 10}
             >
               <Box
                 backgroundColor="primary"
@@ -66,10 +68,10 @@ const Graph = ({ data }: GraphProps): any => {
                 backgroundColor="primary"
                 position="absolute"
                 top={0}
-                height={32}
+                height={22}
                 left={theme.spacing.m}
                 right={theme.spacing.m}
-                borderRadius={32}
+                borderRadius={22}
               />
             </Box>
           );

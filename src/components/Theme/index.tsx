@@ -23,6 +23,7 @@ const theme: BaseTheme = createTheme({
     primaryLight: '#faf6d7',
     primary: '#dec81b',
     secondary: '#312e38',
+    white: '#fff',
   },
   spacing: {
     s: 8,
