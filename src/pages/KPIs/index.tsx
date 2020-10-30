@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
+import { acc } from 'react-native-reanimated';
+import * as d3 from 'd3';
 import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../hooks/auth';
 
 import { Container, Header, HeaderTitle, UserName } from './styles';
 import Graph from '../../components/Graph';
+
+export interface GraphData {
+  date: number;
+  value: number;
+}
 
 export interface Ticket {
   id: string;
@@ -53,7 +60,7 @@ const KPIs: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [tickets, setTickets] = useState<GraphData[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const clientsPerPage = 3;
 
@@ -63,9 +70,35 @@ const KPIs: React.FC = () => {
         return;
       }
 
-      setTotal(data.length);
-      setPage(2);
-      setTickets(data.slice(0, clientsPerPage));
+      const dataFormatted = data.map((p: Ticket) => {
+        const n = {
+          value: 1,
+          year: new Date(p.created_at).getFullYear(),
+          month: new Date(p.created_at).getMonth(),
+        };
+        return n;
+      });
+      console.log(dataFormatted);
+
+      const expenses = [
+        { name: 'jim', amount: 34, date: '11/12/2015' },
+        { name: 'carl', amount: 120.11, date: '11/12/2015' },
+        { name: 'jim', amount: 45, date: '12/01/2015' },
+        { name: 'stacy', amount: 12.0, date: '01/04/2016' },
+        { name: 'stacy', amount: 34.1, date: '01/04/2016' },
+        { name: 'stacy', amount: 44.8, date: '01/05/2016' },
+      ];
+
+      const expensesByName = d3.rollup(
+        data,
+        a => a.length,
+        b => new Date(b.created_at).getMonth(),
+      );
+
+      console.log(expensesByName);
+
+      // const teste = d3.group(dataFormatted, item => item.year);
+      // console.log(teste);
     }
   }, [data]);
 
@@ -76,7 +109,7 @@ const KPIs: React.FC = () => {
           <UserName>Indicadores</UserName>
         </HeaderTitle>
       </Header>
-      <Graph data={data2} />
+      <Graph data={tickets} />
     </Container>
   );
 };

@@ -26,8 +26,6 @@ const Graph = ({ data }: GraphProps): any => {
   const step = width / data.length;
   const values = data.map(p => p.value);
   const dates = data.map(p => p.date);
-  const minX = Math.min(...dates);
-  const maxX = Math.max(...dates);
   const minY = Math.min(...values);
   const maxY = Math.max(...values);
   return (
