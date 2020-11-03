@@ -1,15 +1,13 @@
 import React from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions } from 'react-native';
 import theme, { Box } from '../Theme';
 import Underlay from '../Underlay';
 
 const { width: wWidth } = Dimensions.get('window');
 const aspectRation = 195 / 305;
-const lerp = (v0: number, v1: number, t: number): number =>
-  (1 - t) * v0 + t * v1;
 
 interface Point {
-  date: number;
+  data: number;
   value: number;
 }
 
@@ -25,7 +23,7 @@ const Graph = ({ data }: GraphProps): any => {
   const height = canvasHeight - theme.spacing[margin];
   const step = width / data.length;
   const values = data.map(p => p.value);
-  const dates = data.map(p => p.date);
+  const datas = data.map(p => p.data);
   const minY = Math.min(...values);
   const maxY = Math.max(...values);
   return (
@@ -34,9 +32,8 @@ const Graph = ({ data }: GraphProps): any => {
       paddingBottom={margin}
       paddingLeft={margin}
       alignItems="center"
-      marginHorizontal="m"
     >
-      <Underlay minY={minY} maxY={maxY} dates={dates} step={step} />
+      <Underlay minY={minY} maxY={maxY} data={datas} step={step} />
       <Box width={width} height={height}>
         {data.map((point, i) => {
           if (point.value === 0) {
@@ -44,7 +41,7 @@ const Graph = ({ data }: GraphProps): any => {
           }
           return (
             <Box
-              key={point.date}
+              key={point.data * Math.random()}
               position="absolute"
               left={i * step}
               bottom={0}

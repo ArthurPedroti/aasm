@@ -1,20 +1,16 @@
 import React from 'react';
-import { format } from 'date-fns';
 import { StyleSheet } from 'react-native';
-import ptBR from 'date-fns/locale/pt-BR';
 import theme, { Box, Text } from '../Theme';
 
 interface UnderlayProps {
-  dates: number[];
+  data: number[];
   minY: number;
   maxY: number;
   step: number;
 }
 
-const Underlay = ({ dates, minY, maxY, step }: UnderlayProps): any => {
+const Underlay = ({ data, maxY, step }: UnderlayProps): any => {
   const row_height = 16;
-  const lerp = (v0: number, v1: number, t: number): number =>
-    (1 - t) * v0 + t * v1;
 
   return (
     <Box style={StyleSheet.absoluteFill}>
@@ -22,16 +18,21 @@ const Underlay = ({ dates, minY, maxY, step }: UnderlayProps): any => {
         {[1, 0.66, 0.33, 0].map(p => {
           return (
             <Box
-              key={p}
+              key={Math.random()}
               flexDirection="row"
               alignItems="center"
               height={row_height}
               style={{
+                // eslint-disable-next-line no-nested-ternary
                 top: p === 0 ? row_height / 2 : p === 1 ? -row_height / 2 : 0,
               }}
             >
-              <Box width={theme.spacing.xl} paddingRight="s">
-                <Text color="white" textAlign="right">
+              <Box
+                key={Math.random()}
+                width={theme.spacing.xl}
+                paddingRight="s"
+              >
+                <Text color="white" textAlign="center">
                   {Math.round(p * maxY)}
                 </Text>
               </Box>
@@ -41,19 +42,21 @@ const Underlay = ({ dates, minY, maxY, step }: UnderlayProps): any => {
         })}
       </Box>
       <Box
-        marginLeft="xl"
+        key={Math.random()}
+        marginLeft="l"
         height={theme.spacing.xl}
         flexDirection="row"
         alignItems="center"
       >
-        {dates.map(date => (
-          <Box width={step}>
+        {data.map(item => (
+          <Box key={Math.random()} width={step}>
             <Text
+              key={step * Math.random()}
               color="white"
               textAlign="center"
               style={{ textTransform: 'capitalize' }}
             >
-              {format(new Date(date), 'LLL', { locale: ptBR })}
+              {item}
             </Text>
           </Box>
         ))}

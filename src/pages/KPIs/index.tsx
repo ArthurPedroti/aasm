@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-import { useNavigation } from '@react-navigation/native';
-import { acc } from 'react-native-reanimated';
 import * as d3 from 'd3';
 import { useFetch } from '../../hooks/useFetch';
-import { useAuth } from '../../hooks/auth';
 
-import { Container, Header, HeaderTitle, UserName } from './styles';
+import { Container, Header, HeaderTitle, UserName, ChartTitle } from './styles';
 import Graph from '../../components/Graph';
 
-export interface GraphData {
-  date: number;
+interface Point {
+  data: number;
   value: number;
 }
 
@@ -26,43 +23,10 @@ export interface Ticket {
   created_at: string;
 }
 
-const data2 = [
-  {
-    date: new Date('2019-09-01').getTime(),
-    value: 30,
-  },
-  {
-    date: new Date('2019-10-01').getTime(),
-    value: 40,
-  },
-  {
-    date: new Date('2019-11-01').getTime(),
-    value: 200,
-  },
-  {
-    date: new Date('2019-12-01').getTime(),
-    value: 120,
-  },
-  {
-    date: new Date('2020-01-01').getTime(),
-    value: 70,
-  },
-  {
-    date: new Date('2020-02-01').getTime(),
-    value: 50,
-  },
-];
-
 const KPIs: React.FC = () => {
-  const { user, signOut } = useAuth();
-  const { navigate } = useNavigation();
   const { data } = useFetch<Ticket[]>('tickets');
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(2);
-  const [loading, setLoading] = useState(false);
-  const [tickets, setTickets] = useState<GraphData[]>([]);
-  const [searchValue, setSearchValue] = useState('');
-  const clientsPerPage = 3;
+  const [ticketsPerMonth, setTicketsPerMonth] = useState([]);
+  const [ticketsPerUser, setTicketsPerUser] = useState([]);
 
   useEffect(() => {
     if (data !== undefined) {
@@ -70,47 +34,78 @@ const KPIs: React.FC = () => {
         return;
       }
 
-      const dataFormatted = data.map((p: Ticket) => {
-        const n = {
-          value: 1,
-          year: new Date(p.created_at).getFullYear(),
-          month: new Date(p.created_at).getMonth(),
-        };
-        return n;
-      });
-      console.log(dataFormatted);
-
-      const expenses = [
-        { name: 'jim', amount: 34, date: '11/12/2015' },
-        { name: 'carl', amount: 120.11, date: '11/12/2015' },
-        { name: 'jim', amount: 45, date: '12/01/2015' },
-        { name: 'stacy', amount: 12.0, date: '01/04/2016' },
-        { name: 'stacy', amount: 34.1, date: '01/04/2016' },
-        { name: 'stacy', amount: 44.8, date: '01/05/2016' },
-      ];
-
-      const expensesByName = d3.rollup(
+      // ticketPerMonth
+      const ticketPerMonthD3 = d3.rollup(
         data,
         a => a.length,
-        b => new Date(b.created_at).getMonth(),
+        (b: any) => new Date(b.created_at).getMonth() + 1,
       );
 
-      console.log(expensesByName);
+      const ticketPerMonth = Array.from(ticketPerMonthD3)
+        .reduce((accu: any, value) => {
+          const newObj = {
+            data: value[0],
+            value: value[1],
+          };
 
-      // const teste = d3.group(dataFormatted, item => item.year);
-      // console.log(teste);
+          accu.push(newObj);
+
+          return accu;
+        }, [])
+        .slice()
+        .sort((a: any, b: any) => d3.ascending(a.data, b.data));
+
+      setTicketsPerMonth(ticketPerMonth);
+
+      // ticketPerUser
+      const ticketPerUserD3 = d3.rollup(
+        data,
+        a => a.length,
+        (b: any) => b.user.name,
+      );
+
+      const ticketPerUser = Array.from(ticketPerUserD3)
+        .reduce((accu: any, value) => {
+          const newObj = {
+            data: value[0],
+            value: value[1],
+          };
+
+          accu.push(newObj);
+
+          return accu;
+        }, [])
+        .slice()
+        .sort((a: any, b: any) => d3.ascending(a.data, b.data));
+
+      console.log(ticketPerUser);
     }
   }, [data]);
 
   return (
-    <Container>
+    <>
       <Header>
-        <HeaderTitle onPress={() => signOut()}>
+        <HeaderTitle>
           <UserName>Indicadores</UserName>
         </HeaderTitle>
       </Header>
-      <Graph data={tickets} />
-    </Container>
+      <Container>
+        {ticketsPerMonth.length > 0 ? (
+          <>
+            <ChartTitle>Chamados abertos por mês</ChartTitle>
+            <Graph data={ticketsPerMonth} />
+          </>
+        ) : null}
+        {ticketsPerMonth.length > 0 ? (
+          <>
+            <ChartTitle>Chamados abertos por usuário</ChartTitle>
+            {ticketsPerUser.map(ticket => (
+              <UserName>{ticket.data}</UserName>
+            ))}
+          </>
+        ) : null}
+      </Container>
+    </>
   );
 };
 

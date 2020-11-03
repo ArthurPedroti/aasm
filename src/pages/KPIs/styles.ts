@@ -29,6 +29,7 @@ const containerVariations = {
 export const Container = styled.View`
   flex: 1;
   background: #312e38;
+  padding: 30px;
 `;
 
 export const Header = styled.View`
@@ -116,4 +117,9 @@ export const TicketMeta = styled.View`
 export const TicketMetaText = styled.Text<ContainerProps>`
   margin-left: 8px;
   ${props => containerVariations[props.type || 'default']}
+`;
+
+export const ChartTitle = styled.Text`
+  color: #f4ede8;
+  font-size: 20px;
 `;
