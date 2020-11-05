@@ -51,7 +51,14 @@ const Routes: React.FC = () => {
 
     // Available in SDK Version 3.6.5-
     // OneSignal.setExternalUserId(myCustomUniqueUserId);
-    return user.role === 'admin' ? <AdminRoutes /> : <UserRoutes />;
+    switch (user.role) {
+      case 'master':
+        return <AdminRoutes />;
+      case 'admin':
+        return <AdminRoutes />;
+      default:
+        return <UserRoutes />;
+    }
   }
 
   return <AuthRoutes />;

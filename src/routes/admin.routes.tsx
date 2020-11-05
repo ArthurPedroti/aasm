@@ -32,6 +32,17 @@ const AdminStackRoutes: React.FC = () => (
   </App.Navigator>
 );
 
+const KPIsRoutes: React.FC = () => (
+  <App.Navigator
+    screenOptions={{
+      headerShown: false,
+      cardStyle: { backgroundColor: '#312e38' },
+    }}
+  >
+    <App.Screen name="KPIs" component={KPIs} />
+  </App.Navigator>
+);
+
 const AdminTabs: React.FC = () => (
   <Bottom.Navigator
     tabBarOptions={{
@@ -73,7 +84,7 @@ const AdminTabs: React.FC = () => (
     />
     <Bottom.Screen
       name="Indicadores"
-      component={KPIs}
+      component={KPIsRoutes}
       options={{
         tabBarIcon: ({ size, focused }) => (
           <Icon
