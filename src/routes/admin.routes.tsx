@@ -6,12 +6,12 @@ import CreateTicket from '../pages/CreateTicket';
 import AdminEditTicket from '../pages/AdminEditTicket';
 import ShowTicket from '../pages/ShowTicket';
 import TicketUpdates from '../pages/TicketUpdates';
-import CreateTicketUpdate from '../pages/CreateTicketUpdate';
 import ShowTicketUpdate from '../pages/ShowTicketUpdate';
+import CreateTicketUpdate from '../pages/CreateTicketUpdate';
 
 const App = createStackNavigator();
 
-const AdminRoutes: React.FC = () => (
+const AdminStackRoutes: React.FC = () => (
   <App.Navigator
     screenOptions={{
       headerShown: false,
@@ -28,4 +28,4 @@ const AdminRoutes: React.FC = () => (
   </App.Navigator>
 );
 
-export default AdminRoutes;
+export default AdminStackRoutes;

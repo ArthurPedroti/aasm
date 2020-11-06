@@ -196,7 +196,7 @@ const ShowTicketUpdate: React.FC = () => {
         );
       }
     },
-    [navigation, selectedFlag, ticket.id, user.role],
+    [navigation, selectedFlag, ticket_update.id, user.role],
   );
 
   return (

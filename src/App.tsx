@@ -6,6 +6,8 @@ import codePush from 'react-native-code-push';
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import OneSignal from 'react-native-onesignal';
+import { ThemeProvider } from '@shopify/restyle';
+import theme from './components/Theme';
 
 import AppProvider from './hooks';
 
@@ -25,14 +27,16 @@ const AppToOneSignal: React.FC = () => {
   }, []);
 
   return (
-    <NavigationContainer>
-      <StatusBar barStyle="light-content" backgroundColor="#312e38" />
-      <AppProvider>
-        <View style={{ flex: 1, backgroundColor: '#312e38' }}>
-          <Routes />
-        </View>
-      </AppProvider>
-    </NavigationContainer>
+    <ThemeProvider {...{ theme }}>
+      <NavigationContainer>
+        <StatusBar barStyle="light-content" backgroundColor="#312e38" />
+        <AppProvider>
+          <View style={{ flex: 1, backgroundColor: '#312e38' }}>
+            <Routes />
+          </View>
+        </AppProvider>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 };
 
