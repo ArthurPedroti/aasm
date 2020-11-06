@@ -67,7 +67,7 @@ const ShowTicket: React.FC = () => {
 
   const navigationToEditTicket = useCallback(
     ticketRecieved => {
-      user.role === 'admin'
+      user.role === 'admin' || user.role === 'master'
         ? navigation.navigate('AdminEditTicket', { ticket: ticketRecieved })
         : navigation.navigate('UserEditTicket', { ticket: ticketRecieved });
     },
@@ -76,7 +76,7 @@ const ShowTicket: React.FC = () => {
 
   const navigationToTicketUpdates = useCallback(
     ticketUpdates => {
-      user.role === 'admin'
+      user.role === 'admin' || user.role === 'master'
         ? navigation.navigate('TicketUpdates', {
             ticket_updates: ticketUpdates,
             ticket,
@@ -96,10 +96,10 @@ const ShowTicket: React.FC = () => {
       Alert.alert('Chamado cancelado com sucesso!');
       mutateGlobal('tickets/me');
 
-      if (user.role === 'admin') {
-        navigation.navigate('AdminDashboard');
-      } else {
+      if (user.role === 'user') {
         navigation.navigate('Dashboard');
+      } else {
+        navigation.navigate('AdminDashboard');
       }
     } catch (err) {
       Alert.alert(

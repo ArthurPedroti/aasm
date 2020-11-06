@@ -177,10 +177,10 @@ const ShowTicketUpdate: React.FC = () => {
         await api.put<TicketUpdate>(`/ticket-updates`, completeData);
 
         Alert.alert('Chamado editado com sucesso!');
-        if (user.role === 'admin') {
-          navigation.navigate('AdminDashboard');
-        } else {
+        if (user.role === 'user') {
           navigation.navigate('Dashboard');
+        } else {
+          navigation.navigate('AdminDashboard');
         }
       } catch (err) {
         console.log(err);

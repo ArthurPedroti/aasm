@@ -95,10 +95,10 @@ const TicketUpdates: React.FC = () => {
 
         Alert.alert('Chamado cancelado com sucesso!');
 
-        if (user.role === 'admin') {
-          navigation.navigate('AdminDashboard');
-        } else {
+        if (user.role === 'user') {
           navigation.navigate('Dashboard');
+        } else {
+          navigation.navigate('AdminDashboard');
         }
       } catch (err) {
         Alert.alert(

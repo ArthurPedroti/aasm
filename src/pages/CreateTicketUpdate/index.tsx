@@ -166,10 +166,10 @@ const CreateTicketUpdate: React.FC = () => {
         await api.post<TicketUpdate>(`/ticket-updates`, completeData);
 
         Alert.alert('Chamado criado com sucesso!');
-        if (user.role === 'admin') {
-          navigation.navigate('AdminDashboard');
-        } else {
+        if (user.role === 'user') {
           navigation.navigate('Dashboard');
+        } else {
+          navigation.navigate('AdminDashboard');
         }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {

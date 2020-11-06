@@ -47,10 +47,10 @@ interface RouteParams {
     client_name: string;
     client_cnpj: string;
     classification: string;
-    status: string;
     equipment: string;
     type: string;
     description: string;
+    sector: string;
   };
 }
 
@@ -94,7 +94,7 @@ const classificationOptions = [
   'Manutenção preventiva',
   'Manutenção corretiva',
 ];
-const statusOptions = ['Não atendido', 'Em atendimento', 'Atendido'];
+const sectorOptions = ['Rochas ornamentais', 'Construção civil', 'Outros'];
 
 const AdminEditTicket: React.FC = () => {
   const route = useRoute();
@@ -105,7 +105,7 @@ const AdminEditTicket: React.FC = () => {
   const [selectedClassification, setSelectedClassification] = useState(
     ticket.classification,
   );
-  const [selectedStatus, setSelectedStatus] = useState(ticket.status);
+  const [selectedSector, setSelectedSector] = useState(ticket.sector);
   const { data: clients } = useFetch<Client[]>('tickets/clients');
 
   const [selectedClient, setSelectedClient] = useState<Client>({
@@ -126,7 +126,7 @@ const AdminEditTicket: React.FC = () => {
   const [clientError, setClientError] = useState(false);
   const [typeError, setTypeError] = useState('');
   const [classificationError, setClassificationError] = useState('');
-  const [statusError, setStatusError] = useState('');
+  const [sectorError, setSectorError] = useState('');
 
   // search
   const [clientsFiltered, setClientsFiltered] = useState<Client[]>([]);
@@ -186,11 +186,11 @@ const AdminEditTicket: React.FC = () => {
     [setSelectedClassification],
   );
 
-  const handleStatusChanged = useCallback(
-    (status: string) => {
-      setSelectedStatus(status);
+  const handleSectorChanged = useCallback(
+    (sector: string) => {
+      setSelectedSector(sector);
     },
-    [setSelectedStatus],
+    [setSelectedSector],
   );
 
   const handleCreateTicket = useCallback(
@@ -222,8 +222,9 @@ const AdminEditTicket: React.FC = () => {
           return;
         }
 
-        if (selectedStatus === '') {
-          setStatusError('Selecione o status!');
+        console.log(selectedSector);
+        if (selectedSector === 'Não classificado') {
+          setSectorError('Selecione o setor!');
           return;
         }
 
@@ -238,7 +239,7 @@ const AdminEditTicket: React.FC = () => {
           client_cnpj: selectedClient.cnpj,
           type: selectedType,
           classification: selectedClassification,
-          status: selectedStatus,
+          sector: selectedSector,
         };
 
         const updatedTicket = await api.put(
@@ -267,7 +268,7 @@ const AdminEditTicket: React.FC = () => {
       navigation,
       selectedClassification,
       selectedClient,
-      selectedStatus,
+      selectedSector,
       selectedType,
       ticket,
     ],
@@ -391,18 +392,18 @@ const AdminEditTicket: React.FC = () => {
           </Type>
           <Type>
             <SectionMetaTitle>
-              <Title>Escolha a status</Title>
-              <SectionError>{statusError}</SectionError>
+              <Title>Escolha a setor</Title>
+              <SectionError>{sectorError}</SectionError>
             </SectionMetaTitle>
             <Section>
               <SectionContent>
-                {statusOptions.map(option => (
+                {sectorOptions.map(option => (
                   <TypeOption
-                    selected={selectedStatus === option}
+                    selected={selectedSector === option}
                     key={option}
-                    onPress={() => handleStatusChanged(option)}
+                    onPress={() => handleSectorChanged(option)}
                   >
-                    <TypeText selected={selectedStatus === option}>
+                    <TypeText selected={selectedSector === option}>
                       {option}
                     </TypeText>
                   </TypeOption>
