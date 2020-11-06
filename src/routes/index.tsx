@@ -5,6 +5,7 @@ import OneSignal from 'react-native-onesignal';
 import AuthRoutes from './auth.routes';
 import UserRoutes from './user.routes';
 import AdminRoutes from './admin.routes';
+import MasterRoutes from './master.routes';
 
 import { useAuth } from '../hooks/auth';
 
@@ -53,7 +54,7 @@ const Routes: React.FC = () => {
     // OneSignal.setExternalUserId(myCustomUniqueUserId);
     switch (user.role) {
       case 'master':
-        return <AdminRoutes />;
+        return <MasterRoutes />;
       case 'admin':
         return <AdminRoutes />;
       default:
