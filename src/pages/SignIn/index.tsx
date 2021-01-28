@@ -28,8 +28,8 @@ import {
   Container,
   ImageLogo,
   Title,
-  // ForgotPassword,
-  // ForgotPasswordText,
+  ForgotPassword,
+  ForgotPasswordText,
   // CreateAccountButton,
   // CreateAccountButtonText,
 } from './styles';
@@ -144,9 +144,9 @@ const SignIn: React.FC = () => {
                 />
               )}
             </Form>
-            {/* <ForgotPassword onPress={() => {}}>
-              <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
-            </ForgotPassword> */}
+            <ForgotPassword>
+              <ForgotPasswordText>0.0.22</ForgotPasswordText>
+            </ForgotPassword>
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
