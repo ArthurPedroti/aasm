@@ -4,7 +4,7 @@
 </h1>
 
 <h3 align="center" >
-  A template for React Native projects
+  Me Salva!
 </h3>
 
 <p align="center">
