@@ -199,6 +199,12 @@ const Dashboard: React.FC = () => {
                   <TicketMetaText type="error">Não atendido</TicketMetaText>
                 </TicketMeta>
               ) : null}
+              {ticket.status === 'Cancelado' ? (
+                <TicketMeta>
+                  <Icon name="x" size={14} color="#c53030" />
+                  <TicketMetaText type="error">Cancelado</TicketMetaText>
+                </TicketMeta>
+              ) : null}
               {ticket.type === 'Máquina não parada' ? (
                 <TicketMeta>
                   <Entypo name="tools" size={14} color="#999591" />

@@ -145,7 +145,7 @@ const SignIn: React.FC = () => {
               )}
             </Form>
             <ForgotPassword>
-              <ForgotPasswordText>0.0.22</ForgotPasswordText>
+              <ForgotPasswordText>0.0.23</ForgotPasswordText>
             </ForgotPassword>
           </Container>
         </ScrollView>
