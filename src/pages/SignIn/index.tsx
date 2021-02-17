@@ -66,7 +66,7 @@ const SignIn: React.FC = () => {
 
         setLoading(true);
 
-        await signIn({
+        const response = await signIn({
           email: data.email,
           password: data.password,
         });
@@ -76,6 +76,7 @@ const SignIn: React.FC = () => {
           formRef.current?.setErrors(errors);
           return;
         }
+        console.log(err);
 
         setLoading(false);
         Alert.alert(
@@ -145,7 +146,7 @@ const SignIn: React.FC = () => {
               )}
             </Form>
             <ForgotPassword>
-              <ForgotPasswordText>0.0.23</ForgotPasswordText>
+              <ForgotPasswordText>0.0.24</ForgotPasswordText>
             </ForgotPassword>
           </Container>
         </ScrollView>

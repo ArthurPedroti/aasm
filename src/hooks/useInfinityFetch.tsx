@@ -1,5 +1,5 @@
 import { useSWRInfinite } from 'swr';
-import api from '../services/api';
+import apiPromise from '../services/api';
 
 interface Response {
   data: any;
@@ -20,6 +20,7 @@ export function useInfinityFetch<Data = any, Error = any>(
   >(
     index => `tickets?page=${index + 1}`,
     async urlparam => {
+      const api = await apiPromise();
       const response = await api.get(urlparam, params);
       return response.data;
     },

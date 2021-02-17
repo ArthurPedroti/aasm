@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import OneSignal from 'react-native-onesignal';
 import { ThemeProvider } from '@shopify/restyle';
+import AsyncStorage from '@react-native-community/async-storage';
 import theme from './components/Theme';
 
 import AppProvider from './hooks';
@@ -23,6 +24,15 @@ export interface Notification {
 
 const AppToOneSignal: React.FC = () => {
   useEffect(() => {
+    async function checkIP(): Promise<void> {
+      const response = await fetch('https://api.ipify.org').then(res =>
+        res.text(),
+      );
+      console.log(`Initial ip: ${response}`);
+      await AsyncStorage.setItem('@MeSalva:ip', response);
+    }
+
+    checkIP();
     SplashScreen.hide();
   }, []);
 

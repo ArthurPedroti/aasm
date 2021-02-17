@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 
 import { Modalize } from 'react-native-modalize';
 import { useFetch } from '../../hooks/useFetch';
-import api from '../../services/api';
+import apiPromise from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -204,6 +204,7 @@ const UserEditTicket: React.FC = () => {
           type: selectedType,
         };
 
+        const api = await apiPromise();
         const updatedTicket = await api.put(
           `/tickets/${ticket.id}/me`,
           completeData,

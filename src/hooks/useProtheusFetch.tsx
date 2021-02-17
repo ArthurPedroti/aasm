@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import apiProtheus from '../services/apiProtheus';
+import apiPromise from '../services/apiProtheus';
 
 interface Response {
   data: any;
@@ -13,7 +13,8 @@ export function useProtheusFetch<Data = any, Error = any>(
   const { data, error, mutate } = useSWR<Data, Error>(
     url,
     async urlparam => {
-      const response = await apiProtheus.get(urlparam);
+      const api = await apiPromise();
+      const response = await api.get(urlparam);
 
       return response.data;
     },

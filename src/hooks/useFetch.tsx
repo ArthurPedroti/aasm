@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import AsyncStorage from '@react-native-community/async-storage';
-import api from '../services/api';
+import apiPromise from '../services/api';
 
 interface Response {
   data: any;
@@ -15,6 +15,7 @@ export function useFetch<Data = any, Error = any>(
   const { data, error, mutate } = useSWR<Data, Error>(
     url,
     async urlparam => {
+      const api = await apiPromise();
       const response = await api.get(urlparam, params);
       await AsyncStorage.setItem(
         `@MeSalva:${urlparam}`,

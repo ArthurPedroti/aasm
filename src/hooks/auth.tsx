@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { mutate } from 'swr';
-import api from '../services/api';
+import apiPromise from '../services/api';
 
 interface User {
   id: string;
@@ -59,6 +59,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
       if (token[1] && user[1]) {
         setData({ token: token[1], user: JSON.parse(user[1]) });
+        const api = await apiPromise();
         api.defaults.headers.authorization = `Bearer ${token[1]}`;
 
         if (tickets[1]) {
@@ -96,6 +97,7 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
+    const api = await apiPromise();
     const response = await api.post('sessions', {
       email,
       password,

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Entypo';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Alert } from 'react-native';
-import api from '../../services/api';
+import apiPromise from '../../services/api';
 import Button from '../../components/Button';
 
 import {
@@ -14,9 +14,6 @@ import {
   TicketUpdateMeta,
   TicketUpdateTitle,
   TicketUpdateDescription,
-  TicketActions,
-  ActionButton,
-  ButtonText,
   TicketWrap,
   TicketLine,
 } from './styles';
@@ -91,6 +88,7 @@ const UserTicketUpdates: React.FC = () => {
   const handleDelete = useCallback(
     async (id: string) => {
       try {
+        const api = await apiPromise();
         await api.delete(`/ticket-updates/${id}`);
 
         Alert.alert('Chamado cancelado com sucesso!');

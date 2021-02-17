@@ -23,7 +23,7 @@ import {
 } from './styles';
 
 import { useAuth } from '../../hooks/auth';
-import api from '../../services/api';
+import apiPromise from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -174,6 +174,7 @@ const ShowTicketUpdate: React.FC = () => {
           };
         }
 
+        const api = await apiPromise();
         await api.put<TicketUpdate>(`/ticket-updates`, completeData);
 
         Alert.alert('Chamado editado com sucesso!');

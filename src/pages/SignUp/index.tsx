@@ -14,7 +14,7 @@ import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
-import api from '../../services/api';
+import apiPromise from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -55,6 +55,7 @@ const SignUp: React.FC = () => {
           abortEarly: false,
         });
 
+        const api = await apiPromise();
         await api.post('/users', data);
 
         Alert.alert(

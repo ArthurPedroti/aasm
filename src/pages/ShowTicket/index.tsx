@@ -10,7 +10,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { differenceInDays, parseISO, format } from 'date-fns';
 import { mutate as mutateGlobal } from 'swr';
 
-import api from '../../services/api';
+import apiPromise from '../../services/api';
 import Button from '../../components/Button';
 import { useAuth } from '../../hooks/auth';
 
@@ -91,6 +91,7 @@ const ShowTicket: React.FC = () => {
 
   const handleDelete = useCallback(async () => {
     try {
+      const api = await apiPromise();
       await api.delete(`/tickets/${ticket.id}`);
 
       Alert.alert('Chamado cancelado com sucesso!');

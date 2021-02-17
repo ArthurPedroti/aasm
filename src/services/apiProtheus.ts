@@ -1,8 +1,11 @@
-import axios from 'axios';
-import { API_PROTHEUS_URL } from 'react-native-dotenv';
+import axios, { AxiosInstance } from 'axios';
+import getProtheusBaseUrl from '../utils/getProtheusBaseUrl';
 
-const apiProtheus = axios.create({
-  baseURL: API_PROTHEUS_URL,
-});
+const apiPromise = async (): Promise<AxiosInstance> => {
+  const baseURL = await getProtheusBaseUrl();
+  return axios.create({
+    baseURL,
+  });
+};
 
-export default apiProtheus;
+export default apiPromise;
