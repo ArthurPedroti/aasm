@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import { API_URL } from 'react-native-dotenv';
+import { API_URL, API_LOCAL_URL } from 'react-native-dotenv';
 
 export default async function getBaseUrl(): Promise<string> {
   let ip = await AsyncStorage.getItem('@MeSalva:ip');
@@ -9,7 +9,7 @@ export default async function getBaseUrl(): Promise<string> {
   }
 
   if (ip === '186.193.142.154') {
-    return 'http://192.168.2.251';
+    return API_LOCAL_URL;
   }
   return API_URL;
 }
